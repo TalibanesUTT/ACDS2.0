@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct ACDS2_0App: App {
+    @StateObject private var navigationManager = NavigationManager()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView().environmentObject(navigationManager)
         }
     }
 }
