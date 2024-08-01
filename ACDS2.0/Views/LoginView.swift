@@ -156,7 +156,7 @@ struct LoginView: View {
                             
                     }
                 }
-                    .navigationTitle("")
+                  
             }
             .alert(isPresented: $showAlert) {
                 Alert(

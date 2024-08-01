@@ -12,6 +12,7 @@ struct PassRecoverView: View {
     @State var emailError: String? = nil
     @State var showAlert: Bool = false
     @State private var alertMessage = ""
+    @State var titleAlert: String = ""
     @State var notAbleToComplete: Bool = true
     @EnvironmentObject var navigationManager: NavigationManager
     
@@ -68,7 +69,7 @@ struct PassRecoverView: View {
         }
         .alert(isPresented: $showAlert) {
             Alert(
-                title: Text("Error"),
+                title: Text(titleAlert),
                 message: Text(alertMessage),
                 dismissButton: .default(Text("OK"))
             )
@@ -113,18 +114,20 @@ struct PassRecoverView: View {
                         let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
                         let message = JSONResponse["message"] as! String
                         DispatchQueue.main.async {
-                            alertMessage = "Recibirás un correo con instrucciones para recuperar tu contraseña"
+                            titleAlert = "Aviso"
+                            alertMessage = message
                             showAlert = true
-                            navigateToLogin()
                         }
                     }
                     catch{
+                        titleAlert = "Error"
                         alertMessage = "Algo salió mal!"
                         showAlert = true
                     }
                 }
                 else {
                     DispatchQueue.main.async {
+                        titleAlert = "Error"
                         alertMessage = "Algo salió mal!"
                         showAlert = true
                     }

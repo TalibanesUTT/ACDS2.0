@@ -22,6 +22,8 @@ struct ProfileView: View {
     @State var alertTitle: String = "Aviso"
     @State var initialEmail: String = ""
     @State var initialPhone: String = ""
+    @State var initialName: String = ""
+    @State var initialLastName: String = ""
     @State var valueChanged : String = ""
     @State var finalAlert: Bool = true
     @State var forEditing: Bool = false
@@ -65,6 +67,10 @@ struct ProfileView: View {
                         .keyboardType(.default)
                         .foregroundStyle(.black)
                         .font(.subheadline)
+                        .onChange(of: actualPassword) { newValue in
+                                passwordError = invalidPassword(newValue)
+                                checkForm()
+                            }
                     
                     if let errorMessage = passwordError {
                         Text(errorMessage)
@@ -113,7 +119,10 @@ struct ProfileView: View {
                                 .bold()
                                 .foregroundStyle(.black)
                             
-                            TextField("", text: limitedTextBinding($userData.name, maxLength: 30))
+                            TextField("", text: limitedTextBinding($userData.name, maxLength: 30),
+                                onEditingChanged: {_ in nameError = invalidName(userData.name)
+                                    checkForm()
+                                })
                                 .padding(.all, 10)
                                 .background(Color.gray.opacity(0.3))
                                 .cornerRadius(10)
@@ -128,7 +137,7 @@ struct ProfileView: View {
                                     .foregroundColor(.red)
                                     .font(.caption)
                                     .frame(maxWidth: .infinity,alignment: .leading)
-                                    .padding(.bottom, 60)
+                                    .padding(.bottom, 30)
                             }
                             
                         }
@@ -138,7 +147,10 @@ struct ProfileView: View {
                                 .bold()
                                 .foregroundStyle(.black)
                             
-                            TextField("",text: limitedTextBinding($userData.lastName, maxLength: 60))
+                            TextField("",text: limitedTextBinding($userData.lastName, maxLength: 60),
+                                onEditingChanged: { _ in lastNameError = invalidLastName(userData.lastName)
+                                    checkForm()
+                                })
                                 .padding(.all, 10)
                                 .background(Color.gray.opacity(0.3))
                                 .cornerRadius(10)
@@ -164,7 +176,10 @@ struct ProfileView: View {
                         .bold()
                         .foregroundStyle(.black)
                     
-                    TextField("", text: limitedTextBinding($userData.email, maxLength: 100))
+                    TextField("", text: limitedTextBinding($userData.email, maxLength: 100),
+                              onEditingChanged: { _ in emailError = invalidEmail(userData.email)
+                                  checkForm()
+                              })
                         .padding(.all, 10)
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(10)
@@ -188,7 +203,10 @@ struct ProfileView: View {
                         .bold()
                         .foregroundStyle(.black)
                     
-                    TextField("", text: limitedTextBinding($userData.phone_number, maxLength: 10))
+                    TextField("", text: limitedTextBinding($userData.phone_number, maxLength: 10),
+                          onEditingChanged: { _ in phoneError = invalidNumber(userData.phone_number)
+                              checkForm()
+                        })
                         .padding(.all, 10)
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(10)
@@ -216,6 +234,7 @@ struct ProfileView: View {
                         Button(action: {
                             isEdit = false
                             isChangingPassword = false
+                            resetValues()
                         }, label: {
                             Text("Cancelar")
                                 .padding(8)
@@ -237,6 +256,7 @@ struct ProfileView: View {
                                 .bold()
                                 .font(.footnote)
                         })
+                        .disabled(notAbleToChange)
                         
                     }else{
                         Button(action: {
@@ -269,6 +289,8 @@ struct ProfileView: View {
             .onAppear(){
                 initialEmail = userData.email
                 initialPhone = userData.phone_number
+                initialName = userData.name
+                initialLastName = userData.lastName
             }
             .alert(isPresented:$showAlert){
                 if (!forEditing){
@@ -448,6 +470,8 @@ struct ProfileView: View {
         
         initialEmail = userData.email
         initialPhone = userData.phone_number
+        initialName = userData.name
+        initialLastName = userData.lastName
     }
     
     func saveChanges(){
@@ -575,7 +599,17 @@ struct ProfileView: View {
             else {
                 notAbleToChange = true
             }
-                
+            
+            print(nameError)
+            print(lastNameError)
+            print(emailError)
+            print(phoneError)
+            print(userData.name)
+            print(userData.lastName)
+            print(userData.email)
+            print(userData.phone_number)
+            print(isChangingPassword)
+            
         }
     }
     
@@ -637,7 +671,16 @@ struct ProfileView: View {
             return nil
     }
     
-    
+    func resetValues(){
+        userData.email = initialEmail
+        userData.phone_number = initialPhone
+        userData.name = initialName
+        userData.lastName = initialLastName
+        emailError = nil
+        nameError = nil
+        lastNameError = nil
+        phoneError = nil
+    }
 }
 
 #Preview {
