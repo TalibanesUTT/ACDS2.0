@@ -17,8 +17,10 @@ struct FirstRegisterView: View {
     @State var nameError: String? = nil
     @State var lastNameError: String?  = nil
     @State var notAbleToContinue: Bool = true
+    @State var isUpdate: Bool = false
     @EnvironmentObject var navigationManager: NavigationManager
     @ObservedObject var userData = UserData.shared
+
     
     var body: some View{
         ZStack{
@@ -34,8 +36,10 @@ struct FirstRegisterView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundColor(.black)
                 
-                TextField("", text: limitedTextBinding($nameText, maxLength: 60),
-                        onEditingChanged:{ _ in nameError = invalidName(nameText)
+                TextField("", text: $nameText)
+                    .onChange(of: nameText, {
+                        limitText(&nameText, to: 60)
+                        nameError = invalidName(nameText)
                         checkForm()
                     })
                     .padding(.all,10)
@@ -59,11 +63,13 @@ struct FirstRegisterView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundColor(.black)
                 
-                TextField("", text: limitedTextBinding($lastNameText, maxLength: 60),
-                        onEditingChanged: {_ in lastNameError = invalidLastName(lastNameText)
+                TextField("", text: $lastNameText)
+                    .onChange(of: lastNameText, {
+                        limitText(&lastNameText, to: 60)
+                        lastNameError = invalidLastName(lastNameText)
                         checkForm()
                     })
-                .padding(.all, 10)
+                    .padding(.all, 10)
                     .background(Color.gray.opacity(0.3))
                     .cornerRadius(10)
                     .padding((lastNameError != nil) ? .top: .bottom, (lastNameError != nil) ? 0 : 30)
@@ -84,8 +90,10 @@ struct FirstRegisterView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundColor(.black)
                 
-                TextField("", text: limitedTextBinding($emailText, maxLength: 100),
-                        onEditingChanged: { _ in emailError = invalidEmail(emailText)
+                TextField("", text: $emailText)
+                    .onChange(of: emailText, {
+                        limitText(&emailText, to: 100)
+                        emailError = invalidEmail(emailText)
                         checkForm()
                     })
                     .padding(.all, 10)
@@ -105,7 +113,7 @@ struct FirstRegisterView: View {
                         .padding(.bottom, 30)
                 }
                 
-                Button(action: {verifyExistingEmail()}, label: {
+                Button(action: {!isUpdate ? verifyExistingEmail() : navigateToSRV()}, label: {
                     Text("Siguiente")
                         .padding(.all, 12)
                         .font(.headline)
@@ -142,9 +150,26 @@ struct FirstRegisterView: View {
                 dismissButton: .default(Text("OK"))
             )
         }
+        .onAppear(
+            perform: {
+                if (userData.name.isEmpty){
+                    isUpdate = false
+                } else {
+                    isUpdate = true
+                }
+                print(userData.name)
+                nameText = userData.name
+                lastNameText = userData.lastName
+                emailText = userData.email
+                
+            }
+        )
     }
         
     func navigateToSRV(){
+        userData.email = emailText
+        userData.name = nameText
+        userData.lastName = lastNameText
         navigationManager.path.append("SecondRegister")
     }
     
@@ -189,9 +214,6 @@ struct FirstRegisterView: View {
                         }
                         else{
                             DispatchQueue.main.async {
-                                self.userData.email = emailText
-                                self.userData.name = nameText
-                                self.userData.lastName = lastNameText
                                 navigateToSRV()
                             }
                         }
@@ -224,18 +246,6 @@ struct FirstRegisterView: View {
         } else {
             notAbleToContinue = true
         }
-    }
-    
-    func limitedTextBinding(_ binding: Binding<String>, maxLength: Int) -> Binding<String> {
-        checkForm()
-            return Binding(
-                get: { binding.wrappedValue },
-                set: { newValue in
-                    if newValue.count <= maxLength {
-                        binding.wrappedValue = newValue
-                    }
-                }
-            )
     }
     
     

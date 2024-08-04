@@ -30,10 +30,11 @@ struct PassRecoverView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundColor(.black)
                 
-                TextField("", text: limitedTextBinding($emailText, maxLength: 100),
-                    onEditingChanged: {
-                    _ in emailError = invalidEmail(emailText)
-                    checkForm()
+                TextField("", text: $emailText)
+                    .onChange(of: emailText, {
+                        limitText(&emailText, to: 30)
+                        emailError = invalidEmail(emailText)
+                        checkForm()
                     })
                     .padding(.all,10)
                     .background(Color.gray.opacity(0.3))
@@ -52,7 +53,7 @@ struct PassRecoverView: View {
                         .frame(maxWidth: .infinity,alignment: .leading)
                         .padding(.bottom, 30)
                 }
-                Button(action: {recoverPasswordRequest()}, label: {
+                Button(action: { recoverPasswordRequest() }, label: {
                     Text("Recuperar contraseña")
                         .padding(.all, 12)
                         .font(.headline)
@@ -126,9 +127,17 @@ struct PassRecoverView: View {
                     }
                 }
                 else {
-                    DispatchQueue.main.async {
-                        titleAlert = "Error"
-                        alertMessage = "Algo salió mal!"
+                    do {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        let error = JSONResponse["error"] as! [String:Any]
+                        let message = error["message"] as! String
+                        DispatchQueue.main.async {
+                            alertMessage = message
+                            showAlert = true
+                        }
+                    }
+                    catch{
+                        alertMessage = "Algo salió mal"
                         showAlert = true
                     }
                 }

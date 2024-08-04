@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 class NavigationManager: ObservableObject {
     @Published var path = NavigationPath()
@@ -41,10 +42,11 @@ struct LoginView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundColor(.black)
                     
-                    TextField("", text: limitedTextBinding($emailText, maxLength: 100),
-                        onEditingChanged: {
-                        _ in emailError = invalidEmail(emailText)
-                        checkForm()
+                    TextField("", text: $emailText)
+                        .onChange(of: emailText, {
+                            limitText(&emailText, to: 100)
+                            emailError = invalidEmail(emailText)
+                            checkForm()
                         })
                         .padding(.all,10)
                         .background(Color.gray.opacity(0.3))
@@ -70,7 +72,12 @@ struct LoginView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundColor(.black)
                     
-                    SecureField("", text: limitedTextBinding($passwordText, maxLength: 30))
+                    SecureField("", text: $passwordText)
+                        .onChange(of: passwordText, {
+                            limitText(&passwordText, to: 30)
+                            passwordError = invalidPassword(passwordText)
+                            checkForm()
+                        })
                         .padding(.all, 10)
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(10)
@@ -340,7 +347,6 @@ struct LoginView: View {
     }
     
     func limitedTextBinding(_ binding: Binding<String>, maxLength: Int) -> Binding<String> {
-        checkForm()
             return Binding(
                 get: { binding.wrappedValue },
                 set: { newValue in
@@ -350,9 +356,19 @@ struct LoginView: View {
                 }
             )
     }
-    
 }
 
+extension String {
+    func limited(to length: Int) -> String {
+        return self.count > length ? String(self.prefix(length)) : self
+    }
+}
+
+func limitText<T>(_ value: inout T, to upper: Int) where T: StringProtocol {
+    if value.count > upper {
+        value = String(value.prefix(upper)) as! T
+    }
+}
 
 
 struct ContentView_Previews: PreviewProvider {

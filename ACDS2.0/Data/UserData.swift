@@ -28,4 +28,19 @@ class UserData: ObservableObject {
         token = ""
         signedRoute = ""
     }
+    
+    func setData(_ data :[String:Any]){
+        
+        if let numberValue = Int(data["id"] as! String) {
+            id = numberValue
+        } else {
+            print("No se pudo convertir la cadena a un número")
+        }
+
+        name = data["name"] as! String
+        lastName = data["lastName"] as! String
+        email = data["email"] as! String
+        phone_number = data["phoneNumber"] as! String
+        
+    }
 }

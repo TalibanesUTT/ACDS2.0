@@ -32,7 +32,9 @@ struct ProfileView: View {
     @State var nameError: String? = nil
     @State var lastNameError: String? = nil
     @State var passwordError: String? = nil
+    @State var newPasswordError: String? = nil
     @State var notAbleToChange: Bool = true
+    @State var confirmNewPasswordError: String? = nil
     @ObservedObject var userData = UserData.shared
     
 
@@ -60,17 +62,18 @@ struct ProfileView: View {
                         .foregroundStyle(.black)
                     
                     SecureField("", text: $actualPassword)
+                        .onChange(of: actualPassword, {
+                            limitText(&actualPassword, to: 30)
+                            passwordError = invalidPassword(actualPassword)
+                            checkForm()
+                        })
                         .padding(.all, 10)
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(10)
-                        .padding(.bottom, 30)
+                        .padding((passwordError != nil) ? .top : .bottom, (passwordError != nil ? 0 : 30))
                         .keyboardType(.default)
                         .foregroundStyle(.black)
                         .font(.subheadline)
-                        .onChange(of: actualPassword) { newValue in
-                                passwordError = invalidPassword(newValue)
-                                checkForm()
-                            }
                     
                     if let errorMessage = passwordError {
                         Text(errorMessage)
@@ -87,13 +90,26 @@ struct ProfileView: View {
                         .foregroundStyle(.black)
                     
                     SecureField("", text: $newPassword)
+                        .onChange(of: newPassword, {
+                            limitText(&newPassword, to: 30)
+                            newPasswordError = invalidPassword(newPassword)
+                            checkForm()
+                        })
                         .padding(.all, 10)
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(10)
-                        .padding(.bottom, 30)
+                        .padding((newPasswordError != nil ? .top : .bottom), (newPasswordError != nil ? 0 : 30))
                         .keyboardType(.default)
                         .foregroundStyle(.black)
                         .font(.subheadline)
+                        
+                    if let errorMessage = newPasswordError {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom, 30)
+                    }
                 
                     Text("Confirmar contraseña")
                         .frame(maxWidth: .infinity,alignment: .leading)
@@ -102,13 +118,26 @@ struct ProfileView: View {
                         .foregroundStyle(.black)
                     
                     SecureField("", text: $confirmNewPassword)
+                        .onChange(of: confirmNewPassword, {
+                            limitText(&confirmNewPassword, to: 30)
+                            confirmNewPasswordError = invalidPasswordConfirmation(confirmNewPassword)
+                            checkForm()
+                        })
                         .padding(.all, 10)
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(10)
-                        .padding(.bottom, 30)
+                        .padding((confirmNewPasswordError != nil ? .top : .bottom), (confirmNewPasswordError != nil ? 0 : 30))
                         .keyboardType(.default)
                         .foregroundStyle(.black)
                         .font(.subheadline)
+                    
+                    if let errorMessage = confirmNewPasswordError {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom, 30)
+                    }
                     
                 } else {
                     
@@ -119,8 +148,10 @@ struct ProfileView: View {
                                 .bold()
                                 .foregroundStyle(.black)
                             
-                            TextField("", text: limitedTextBinding($userData.name, maxLength: 30),
-                                onEditingChanged: {_ in nameError = invalidName(userData.name)
+                            TextField("", text:$userData.name)
+                                .onChange(of: userData.name, {
+                                    limitText(&userData.name, to: 60)
+                                    nameError = invalidName(userData.name)
                                     checkForm()
                                 })
                                 .padding(.all, 10)
@@ -147,8 +178,10 @@ struct ProfileView: View {
                                 .bold()
                                 .foregroundStyle(.black)
                             
-                            TextField("",text: limitedTextBinding($userData.lastName, maxLength: 60),
-                                onEditingChanged: { _ in lastNameError = invalidLastName(userData.lastName)
+                            TextField("",text: $userData.lastName)
+                                .onChange(of: userData.lastName, {
+                                    limitText(&userData.lastName, to: 60)
+                                    lastNameError = invalidLastName(userData.lastName)
                                     checkForm()
                                 })
                                 .padding(.all, 10)
@@ -176,10 +209,12 @@ struct ProfileView: View {
                         .bold()
                         .foregroundStyle(.black)
                     
-                    TextField("", text: limitedTextBinding($userData.email, maxLength: 100),
-                              onEditingChanged: { _ in emailError = invalidEmail(userData.email)
-                                  checkForm()
-                              })
+                    TextField("", text: $userData.email)
+                        .onChange(of: userData.email, {
+                            limitText(&userData.email, to: 10)
+                            emailError = invalidEmail(userData.email)
+                            checkForm()
+                        })
                         .padding(.all, 10)
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(10)
@@ -203,9 +238,11 @@ struct ProfileView: View {
                         .bold()
                         .foregroundStyle(.black)
                     
-                    TextField("", text: limitedTextBinding($userData.phone_number, maxLength: 10),
-                          onEditingChanged: { _ in phoneError = invalidNumber(userData.phone_number)
-                              checkForm()
+                    TextField("", text: $userData.phone_number)
+                        .onChange(of: userData.phone_number, {
+                            limitText(&userData.phone_number, to: 10)
+                            phoneError = invalidNumber(userData.phone_number)
+                            checkForm()
                         })
                         .padding(.all, 10)
                         .background(Color.gray.opacity(0.3))
@@ -319,7 +356,7 @@ struct ProfileView: View {
     
     
     func editProfileRequest(){
-        let url = URL(string: "http://localhost:3000/user-management/updateProfile/\(userData.id)")!
+        let url = URL(string: "http://localhost:3000/user-management/\(userData.id)")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "PUT"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -425,6 +462,10 @@ struct ProfileView: View {
                             actualPassword = ""
                             confirmNewPassword = ""
                             newPassword = ""
+                            isChangingPassword = false
+                            newPasswordError = nil
+                            passwordError = nil
+                            confirmNewPasswordError = nil
                             alertMessage = msg
                             showAlert = true
                             isEdit = false
@@ -578,7 +619,7 @@ struct ProfileView: View {
     }
     
     func containsSpecialCharacter(_ value: String) -> Bool {
-        let reqularExpression = ".*[!@#$%^&()-+]+.*"
+        let reqularExpression = ".*[!@#$%^&()\\-+\\{}\\[\\]\\*]+.*"
         let predicate = NSPredicate(format: "SELF MATCHES %@", reqularExpression)
         return !predicate.evaluate(with: value)
     }
@@ -599,30 +640,7 @@ struct ProfileView: View {
             else {
                 notAbleToChange = true
             }
-            
-            print(nameError)
-            print(lastNameError)
-            print(emailError)
-            print(phoneError)
-            print(userData.name)
-            print(userData.lastName)
-            print(userData.email)
-            print(userData.phone_number)
-            print(isChangingPassword)
-            
         }
-    }
-    
-    func limitedTextBinding(_ binding: Binding<String>, maxLength: Int) -> Binding<String> {
-        checkForm()
-        return Binding(
-            get: { binding.wrappedValue },
-            set: { newValue in
-                if newValue.count <= maxLength {
-                    binding.wrappedValue = newValue
-                }
-            }
-        )
     }
     
     func invalidName(_ value: String)-> String? {
@@ -680,6 +698,8 @@ struct ProfileView: View {
         nameError = nil
         lastNameError = nil
         phoneError = nil
+        
+        
     }
 }
 
