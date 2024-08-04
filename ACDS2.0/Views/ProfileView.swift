@@ -35,9 +35,8 @@ struct ProfileView: View {
     @State var newPasswordError: String? = nil
     @State var notAbleToChange: Bool = true
     @State var confirmNewPasswordError: String? = nil
+    @EnvironmentObject var navigationManager: NavigationManager
     @ObservedObject var userData = UserData.shared
-    
-
     
     var body: some View {
         ZStack{
@@ -211,7 +210,7 @@ struct ProfileView: View {
                     
                     TextField("", text: $userData.email)
                         .onChange(of: userData.email, {
-                            limitText(&userData.email, to: 10)
+                            limitText(&userData.email, to: 100)
                             emailError = invalidEmail(userData.email)
                             checkForm()
                         })
@@ -352,11 +351,20 @@ struct ProfileView: View {
         }
     }
     
+    func navigatoToLogin(){
+        userData.resetData()
+        navigationManager.resetToRoot()
+    }
+    
+    func navigateToCodeView(){
+        navigationManager.path.append("Code")
+    }
+    
     //MARK: - Requests
     
     
     func editProfileRequest(){
-        let url = URL(string: "http://localhost:3000/user-management/\(userData.id)")!
+        let url = URL(string: "http://localhost:3000/user-management/updateProfile/\(userData.id)")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "PUT"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -392,8 +400,19 @@ struct ProfileView: View {
                             forEditing = false
                             alertMessage = msg
                             showAlert = true
+                            let tmpEmail = initialEmail
+                            let tmpPhone = initialPhone
                             setData(JSONResponse["data"] as! [String : Any])
                             isEdit = false
+                            
+                            if (tmpPhone != userData.phone_number){
+                                userData.signedRoute = JSONResponse["url"] as! String
+                                navigateToCodeView()
+                            }
+                            else if (tmpEmail != userData.email){
+                                navigatoToLogin()
+                            }
+                            
                         }
                     }
                     catch {
@@ -491,6 +510,54 @@ struct ProfileView: View {
                     }
                     catch{
                         forEditing = false
+                        alertMessage = "Algo salió mal!"
+                        showAlert = true
+                    }
+                }
+            }
+        }
+        task.resume()
+
+    }
+    
+    func logoutRequest(){
+        let url = URL(string: "http://localhost:3000/auth/logout")!
+        var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
+        request.httpMethod = "DELETE"
+        request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
+                  
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error en el request: \(error)")
+                return
+            }
+                
+            if let httpResponse = response as? HTTPURLResponse {
+                if (httpResponse.statusCode == 200) {
+                    do {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        let msg = JSONResponse["message"] as! String
+                        DispatchQueue.main.async {
+                            
+                        }
+                    }
+                    catch{
+                        alertMessage = "Algo salió mal!"
+                        showAlert = true
+                    }
+                }
+                else {
+                    do {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        print(JSONResponse)
+                        let error = JSONResponse["error"] as! [String:Any]
+                        let message = error["message"] as! String
+                        DispatchQueue.main.async {
+                            alertMessage = message
+                            showAlert = true
+                        }
+                    }
+                    catch{
                         alertMessage = "Algo salió mal!"
                         showAlert = true
                     }

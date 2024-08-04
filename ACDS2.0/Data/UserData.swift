@@ -43,4 +43,15 @@ class UserData: ObservableObject {
         phone_number = data["phoneNumber"] as! String
         
     }
+    
+    func resetData() {
+        id = 0
+        name = ""
+        lastName = ""
+        email = ""
+        phone_number = ""
+        rol_id = 1
+        token = ""
+        signedRoute = ""
+    }
 }
