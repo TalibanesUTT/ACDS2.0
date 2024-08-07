@@ -20,6 +20,8 @@
 		CC60DA172C5AA96C0014F5F3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA162C5AA96C0014F5F3 /* HomeView.swift */; };
 		CC60DA192C5AA9C90014F5F3 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA182C5AA9C90014F5F3 /* MainView.swift */; };
 		CC60DA1B2C5B8E100014F5F3 /* PassRecoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA1A2C5B8E100014F5F3 /* PassRecoverView.swift */; };
+		CCF3CB152C61AA3900E694BB /* CarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF3CB142C61AA3900E694BB /* CarData.swift */; };
+		CCF3CB172C61E6EA00E694BB /* CarDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF3CB162C61E6EA00E694BB /* CarDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +39,8 @@
 		CC60DA162C5AA96C0014F5F3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		CC60DA182C5AA9C90014F5F3 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		CC60DA1A2C5B8E100014F5F3 /* PassRecoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassRecoverView.swift; sourceTree = "<group>"; };
+		CCF3CB142C61AA3900E694BB /* CarData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarData.swift; sourceTree = "<group>"; };
+		CCF3CB162C61E6EA00E694BB /* CarDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				CC60DA0B2C5A9F5F0014F5F3 /* UserData.swift */,
+				CCF3CB142C61AA3900E694BB /* CarData.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -106,6 +111,7 @@
 				CC60DA162C5AA96C0014F5F3 /* HomeView.swift */,
 				CC60DA182C5AA9C90014F5F3 /* MainView.swift */,
 				CC60DA1A2C5B8E100014F5F3 /* PassRecoverView.swift */,
+				CCF3CB162C61E6EA00E694BB /* CarDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -183,6 +189,7 @@
 			files = (
 				CC60DA172C5AA96C0014F5F3 /* HomeView.swift in Sources */,
 				CC60DA152C5AA9370014F5F3 /* ProfileView.swift in Sources */,
+				CCF3CB152C61AA3900E694BB /* CarData.swift in Sources */,
 				CC60DA0F2C5AA70A0014F5F3 /* FirstRegisterView.swift in Sources */,
 				CC60DA192C5AA9C90014F5F3 /* MainView.swift in Sources */,
 				CC60DA1B2C5B8E100014F5F3 /* PassRecoverView.swift in Sources */,
@@ -190,6 +197,7 @@
 				CC60DA132C5AA83E0014F5F3 /* CodeVerifyView.swift in Sources */,
 				CC60DA112C5AA7F80014F5F3 /* SecondRegisterView.swift in Sources */,
 				CC60DA0C2C5A9F5F0014F5F3 /* UserData.swift in Sources */,
+				CCF3CB172C61E6EA00E694BB /* CarDetailView.swift in Sources */,
 				CC44B6762C589AA600916C27 /* ACDS2_0App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -321,6 +329,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ACDS2.0/Preview Content\"";
@@ -338,6 +348,11 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Talibanes.ACDS2-0";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -349,6 +364,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ACDS2.0/Preview Content\"";
@@ -366,6 +383,11 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Talibanes.ACDS2-0";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

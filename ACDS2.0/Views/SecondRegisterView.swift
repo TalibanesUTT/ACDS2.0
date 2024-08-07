@@ -164,7 +164,7 @@ struct SecondRegisterView: View {
        let requestBody: [String: Any] = [
            "name": name,
            "lastName": lastName,
-           "phone": phone,
+           "phoneNumber": phone,
            "email": email,
            "password": password,
            "passwordConfirmation": passwordConfirm
