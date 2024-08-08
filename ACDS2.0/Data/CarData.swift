@@ -23,3 +23,23 @@ struct Car: Identifiable{
     let serialNumber: String
 }
 
+struct CarDetail: Identifiable{
+    let id: String
+    let fileNumber: String
+    let initialMileage: Int
+    let notes: String
+    let createDate: String
+    let vehicle: [String:Any]
+    let appointments: [String:Any]?
+    let services: [[String:Any]]
+    let detail: [String:Any]
+    let history: [String:Any]?
+    let actualStatus: String?
+}
+
+struct Service: Identifiable{
+    let id: Int
+    let name: String
+}
+
+

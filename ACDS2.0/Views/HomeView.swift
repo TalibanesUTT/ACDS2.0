@@ -45,7 +45,7 @@ struct HomeView: View {
                 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                     ForEach(myCars){ car in
-                        NavigationLink(destination: CarDetailView(car: (selectedCar)!), label: {
+                        NavigationLink(destination: CarDetailView(car: (car)), label: {
                             VStack{
                                 Image("genericcar")
                                     .resizable()
