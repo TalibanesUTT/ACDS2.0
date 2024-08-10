@@ -20,6 +20,9 @@
 		CC60DA172C5AA96C0014F5F3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA162C5AA96C0014F5F3 /* HomeView.swift */; };
 		CC60DA192C5AA9C90014F5F3 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA182C5AA9C90014F5F3 /* MainView.swift */; };
 		CC60DA1B2C5B8E100014F5F3 /* PassRecoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA1A2C5B8E100014F5F3 /* PassRecoverView.swift */; };
+		CCF2F7DC2C65EAF6006F3333 /* MechanicHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7DB2C65EAF6006F3333 /* MechanicHome.swift */; };
+		CCF2F7DE2C65EBB0006F3333 /* OrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7DD2C65EBB0006F3333 /* OrdersView.swift */; };
+		CCF2F7E22C6800E1006F3333 /* QRCodeGenerate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7E12C6800E1006F3333 /* QRCodeGenerate.swift */; };
 		CCF3CB152C61AA3900E694BB /* CarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF3CB142C61AA3900E694BB /* CarData.swift */; };
 		CCF3CB172C61E6EA00E694BB /* CarDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF3CB162C61E6EA00E694BB /* CarDetailView.swift */; };
 /* End PBXBuildFile section */
@@ -39,6 +42,9 @@
 		CC60DA162C5AA96C0014F5F3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		CC60DA182C5AA9C90014F5F3 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		CC60DA1A2C5B8E100014F5F3 /* PassRecoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassRecoverView.swift; sourceTree = "<group>"; };
+		CCF2F7DB2C65EAF6006F3333 /* MechanicHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MechanicHome.swift; sourceTree = "<group>"; };
+		CCF2F7DD2C65EBB0006F3333 /* OrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersView.swift; sourceTree = "<group>"; };
+		CCF2F7E12C6800E1006F3333 /* QRCodeGenerate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerate.swift; sourceTree = "<group>"; };
 		CCF3CB142C61AA3900E694BB /* CarData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarData.swift; sourceTree = "<group>"; };
 		CCF3CB162C61E6EA00E694BB /* CarDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -73,6 +79,7 @@
 		CC44B6742C589AA600916C27 /* ACDS2.0 */ = {
 			isa = PBXGroup;
 			children = (
+				CCF2F7E02C6800A0006F3333 /* Helpers */,
 				CC44B6832C589C9000916C27 /* logo.jpg */,
 				CC60DA0D2C5AA6980014F5F3 /* Views */,
 				CC60DA0A2C5A9F450014F5F3 /* Data */,
@@ -112,8 +119,18 @@
 				CC60DA182C5AA9C90014F5F3 /* MainView.swift */,
 				CC60DA1A2C5B8E100014F5F3 /* PassRecoverView.swift */,
 				CCF3CB162C61E6EA00E694BB /* CarDetailView.swift */,
+				CCF2F7DB2C65EAF6006F3333 /* MechanicHome.swift */,
+				CCF2F7DD2C65EBB0006F3333 /* OrdersView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		CCF2F7E02C6800A0006F3333 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				CCF2F7E12C6800E1006F3333 /* QRCodeGenerate.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -187,17 +204,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCF2F7DC2C65EAF6006F3333 /* MechanicHome.swift in Sources */,
 				CC60DA172C5AA96C0014F5F3 /* HomeView.swift in Sources */,
 				CC60DA152C5AA9370014F5F3 /* ProfileView.swift in Sources */,
 				CCF3CB152C61AA3900E694BB /* CarData.swift in Sources */,
 				CC60DA0F2C5AA70A0014F5F3 /* FirstRegisterView.swift in Sources */,
 				CC60DA192C5AA9C90014F5F3 /* MainView.swift in Sources */,
 				CC60DA1B2C5B8E100014F5F3 /* PassRecoverView.swift in Sources */,
+				CCF2F7DE2C65EBB0006F3333 /* OrdersView.swift in Sources */,
 				CC44B6782C589AA600916C27 /* LoginView.swift in Sources */,
 				CC60DA132C5AA83E0014F5F3 /* CodeVerifyView.swift in Sources */,
 				CC60DA112C5AA7F80014F5F3 /* SecondRegisterView.swift in Sources */,
 				CC60DA0C2C5A9F5F0014F5F3 /* UserData.swift in Sources */,
 				CCF3CB172C61E6EA00E694BB /* CarDetailView.swift in Sources */,
+				CCF2F7E22C6800E1006F3333 /* QRCodeGenerate.swift in Sources */,
 				CC44B6762C589AA600916C27 /* ACDS2_0App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

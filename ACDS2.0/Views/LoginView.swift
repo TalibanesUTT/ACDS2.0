@@ -157,6 +157,9 @@ struct LoginView: View {
                             
                         case "Recover":
                             PassRecoverView()
+                            
+                        case "Mechanic":
+                            MechanicHome().navigationBarBackButtonHidden(true)
 
                         default:
                             EmptyView()
@@ -185,6 +188,10 @@ struct LoginView: View {
     
     func navigateToRecoverPassword(){
         navigationManager.path.append("Recover")
+    }
+    
+    func navigateToMechanicView(){
+        navigationManager.path.append("Mechanic")
     }
     
     //MARK: - Requests
@@ -219,10 +226,10 @@ struct LoginView: View {
                 if (httpResponse.statusCode == 200) {
                     do {
                         let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
-                        
-                        print(self.userData.token)
+
                         DispatchQueue.main.async {
                             self.userData.token = JSONResponse["data"] as! String
+                            print(self.userData.token)
                             getProfile()
                         }
                     }
@@ -280,7 +287,12 @@ struct LoginView: View {
                             self.userData.lastName = JSONResponse["lastName"] as! String
                             self.userData.email = JSONResponse["email"] as! String
                             self.userData.phone_number = JSONResponse["phoneNumber"] as! String
-                            navigateToHome()
+                            if (JSONResponse["role"] as! String == "customer"){
+                                navigateToHome()
+                            }
+                            else{
+                                navigateToMechanicView()
+                            }
                         }
                     }
                     catch{
