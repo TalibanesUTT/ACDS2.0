@@ -17,7 +17,8 @@ class UserData: ObservableObject {
     @Published var token: String
     @Published var signedRoute: String
     static let shared = UserData()
-    
+    let prodUrl = "http://localhost:3000"
+
     private init() {
         id = 0
         name = ""
@@ -27,6 +28,7 @@ class UserData: ObservableObject {
         rol_id = 1
         token = ""
         signedRoute = ""
+        
     }
     
     func setData(_ data :[String:Any]){

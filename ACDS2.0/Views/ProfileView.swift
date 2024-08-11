@@ -364,7 +364,7 @@ struct ProfileView: View {
     
     
     func editProfileRequest(){
-        let url = URL(string: "http://localhost:3000/user-management/updateProfile/\(userData.id)")!
+        let url = URL(string: "\(userData.prodUrl)/user-management/updateProfile/\(userData.id)")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "PUT"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -445,7 +445,7 @@ struct ProfileView: View {
     }
     
     func changePasswordRequest(){
-        let url = URL(string: "http://localhost:3000/user-management/updatePassword/\(userData.id)")!
+        let url = URL(string: "\(userData.prodUrl)/user-management/updatePassword/\(userData.id)")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "PUT"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -521,7 +521,7 @@ struct ProfileView: View {
     }
     
     func logoutRequest(){
-        let url = URL(string: "http://localhost:3000/auth/logout")!
+        let url = URL(string: "\(userData.prodUrl)/auth/logout")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "DELETE"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")

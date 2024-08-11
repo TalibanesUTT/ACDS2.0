@@ -78,7 +78,7 @@ struct HomeView: View {
         //MARK: - Requests
         
         func vehicleDetailRequest(_ carId: String){
-            let url = URL(string: "http://localhost:3000/vehicles/\(carId)")!
+            let url = URL(string: "\(userData.prodUrl)/vehicles/\(carId)")!
             var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
             request.httpMethod = "GET"
             request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -134,7 +134,7 @@ struct HomeView: View {
         }
         
         func vehiclesRequest(){
-            let url = URL(string: "http://localhost:3000/vehicles/owner/\(userData.id)")!
+            let url = URL(string: "\(userData.prodUrl)/vehicles/owner/\(userData.id)")!
             var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
             request.httpMethod = "GET"
             request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")

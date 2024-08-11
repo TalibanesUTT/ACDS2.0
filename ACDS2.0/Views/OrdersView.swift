@@ -17,8 +17,6 @@ struct OrdersView: View {
     @State private var selectedCustomer: String = "Todos"
     
     var body: some View {
-       
-        
         ScrollView{
             
             Text("Órdenes de servicio")
@@ -26,6 +24,7 @@ struct OrdersView: View {
                 .bold()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
+                .foregroundStyle(.black)
             
             HStack{
                 Text("Cliente: ")
@@ -44,6 +43,7 @@ struct OrdersView: View {
                     }
                 }
             }
+            .foregroundStyle(.black)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading)
             Divider()
@@ -62,16 +62,21 @@ struct OrdersView: View {
                                         .bold()
                                         .padding(.leading, 5)
                                         .lineLimit(1)
+                                        .foregroundStyle(.black)
+                                    
                                     Text("\(toDateFromString(service.createDate)!)")
                                         .frame(maxWidth: .infinity, alignment: .trailing)
                                         .font(.footnote)
                                         .padding(.trailing, 5)
+                                        .foregroundStyle(.black)
                                 }
                                 Text("Servicio: \(formatServicesInList(service.services))")
                                     .lineLimit(2)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .font(.footnote)
                                     .padding(.horizontal, 5)
+                                    .foregroundStyle(.black)
+                                
                                 Text("Cliente: \(service.vehicle["owner"]!)")
                                     .bold()
                                     .frame(maxWidth: .infinity)
@@ -147,7 +152,7 @@ struct OrdersView: View {
     //MARK: - Requests
     
     func pendingServicesRequest(){
-        let url = URL(string: "http://localhost:3000/service-orders/status/pending")!
+        let url = URL(string: "\(userData.prodUrl)/service-orders/status/pending")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "GET"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -191,6 +196,9 @@ struct OrdersView: View {
                         let message = error["message"] as! String
                         DispatchQueue.main.async {
                             alertMessage = message
+                            if (alertMessage == "No hay órdenes de servicio pendientes"){
+                                carServices = []
+                            }
                             showAlert = true
                         }
                     }
@@ -205,7 +213,7 @@ struct OrdersView: View {
     }
     
     func customersRequest(){
-        let url = URL(string: "http://localhost:3000/customers")!
+        let url = URL(string: "\(userData.prodUrl)/customers")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "GET"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -257,7 +265,7 @@ struct OrdersView: View {
     }
     
     func customerServices(_ userId: String){
-        let url = URL(string: "http://localhost:3000/service-orders/user/\(userId)")!
+        let url = URL(string: "\(userData.prodUrl)/service-orders/user/\(userId)")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "GET"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -319,6 +327,15 @@ struct OrdersView: View {
 
 struct ServiceOrderDetailView: View {
     var carDetail: CarDetail
+    @ObservedObject var userData = UserData.shared
+    @State var titleAlert: String = ""
+    @State var showAlert: Bool = false
+    @State var alertMessage: String = ""
+    @State var alertType: Int = 1
+    @State var showTextAlert: Bool = false
+    @State var comments: String = ""
+    @State var isRevert: Bool = false
+    
     var body: some View {
         VStack{
             HStack{
@@ -329,6 +346,7 @@ struct ServiceOrderDetailView: View {
                 Text("\(toDateFromString(carDetail.createDate)!)")
                     .font(.callout)
             }
+            .foregroundStyle(.black)
             Divider()
             HStack{
                 Text("Estatus")
@@ -338,6 +356,7 @@ struct ServiceOrderDetailView: View {
                 Text("\(carDetail.actualStatus ?? "Sin estatus")")
                     .font(.callout)
             }
+            .foregroundStyle(.black)
             Divider()
             HStack{
                 Text("Notas iniciales")
@@ -347,6 +366,7 @@ struct ServiceOrderDetailView: View {
                 Text("\(carDetail.notes)")
                     .font(.callout)
             }
+            .foregroundStyle(.black)
             Divider()
             HStack{
                 Text("Kilometraje inicial")
@@ -356,6 +376,7 @@ struct ServiceOrderDetailView: View {
                 Text("\(carDetail.initialMileage) km")
                     .font(.callout)
             }
+            .foregroundStyle(.black)
             Divider()
             HStack{
                 Text("Servicios")
@@ -365,6 +386,7 @@ struct ServiceOrderDetailView: View {
                 Text("\(formatServicesInList(carDetail.services))")
                     .font(.callout)
             }
+            .foregroundStyle(.black)
             Divider()
             HStack{
                 Text("Presupuesto")
@@ -373,10 +395,109 @@ struct ServiceOrderDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Text("\(formatStringToCurrency(carDetail.detail["budget"] as! String)!)").font(.callout)
             }
+            .foregroundStyle(.black)
             Spacer()
-            
+            VStack{
+                Text("QR de la orden")
+                    .font(.title)
+                    .bold()
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity)
+                    .background(.redBtn)
+                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 10)))
+                    .foregroundStyle(.white)
+                QRCodeGenerate(data: ["id": carDetail.id, "onHold": false, "rollback": false, "cancel": false])
+                    .padding(.bottom, 60)
+                
+                Button(action: {
+                    alertType = 1
+                    titleAlert = "Aviso"
+                    alertMessage = "Estás a punto de cancelar esta orden de servicio. Por favor, introduce comentarios explicando las razones."
+                    showTextAlert = true
+                },
+                    label: {
+                    Text("Cancelar")
+                        .padding(.vertical, 15)
+                        .padding(.horizontal, 8)
+                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+                        .foregroundStyle(.white)
+                        .background(Color.redBtn)
+                        .bold()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                })
+                
+                HStack{
+                    Button(action: {
+                        alertType = 2
+                        titleAlert = "Aviso"
+                        alertMessage = "Estás a punto de poner en espera esta orden de servicio. Esto impedirá que la orden pueda continuar con su flujo. Por favor, introduce comentarios explicando las razones."
+                        showTextAlert = true
+                    },
+                        label: {
+                        Text("En espera")
+                            .padding(.vertical, 15)
+                            .padding(.horizontal, 8)
+                            .frame(maxWidth: .infinity)
+                            .foregroundStyle(.white)
+                            .background(Color.yellow)
+                            .bold()
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    })
+                
+                    Button(action: {
+                        alertType = 3
+                        titleAlert = "Aviso"
+                        isRevert = true
+                        alertMessage = "Estás a punto de revertir el estatus actual de la orden de servicio. Eso regresará la orden de servicio a su penúltimo estatus activo. ¿Deseas continuar?"
+                        showAlert = true
+                    }, label: {
+                        Text("Revertir")
+                            .padding(.vertical, 15)
+                            .padding(.horizontal, 8)
+                            .frame(maxWidth: .infinity)
+                            .foregroundStyle(.white)
+                            .background(Color.blue)
+                            .bold()
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    })
+                }
+            }
         }
         .padding()
+        .alert("Aviso", isPresented: $showTextAlert, actions: {
+            TextField("Comentarios", text: $comments)
+            Button("Cancelar", role: .cancel){comments = ""}
+            Button("Confirmar"){
+                if (alertType == 1){
+                    updateStatusRequest(false, true, false)
+                    
+                }
+                if (alertType == 3) {
+                    updateStatusRequest(true, false, false)
+                }
+                
+                if (alertType == 2) {
+                    updateStatusRequest(false, false, true)
+                }
+                comments = ""
+            }
+        }, message: {
+            Text(alertMessage)
+        })
+        .alert(isPresented: $showAlert){
+            if (isRevert){
+                Alert(title: Text(titleAlert), message: Text(alertMessage), primaryButton: .cancel(), secondaryButton: .default(Text("Confirmar"), action: {
+                    updateStatusRequest(true, false, false)
+                    isRevert = false
+                }))
+            } else {
+                Alert(
+                    title: Text(titleAlert),
+                    message: Text(alertMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+        }
     }
 
     func formatServicesInList(_ services: [[String:Any]]) -> String {
@@ -434,9 +555,75 @@ struct ServiceOrderDetailView: View {
             return nil
         }
     }
+    
+    func updateStatusRequest(_ rollback: Bool, _ cancel: Bool, _ onHold: Bool){
+        let url = URL(string: "\(userData.prodUrl)/service-orders/updateStatus/\(carDetail.id)")!
+        var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
+        request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+            
+        
+        let requestBody: [String: Any] = [
+            "comments": comments,
+            "rollback": rollback,
+            "cancel": cancel,
+            "onHold": onHold
+        ]
+        
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: [])
+            request.httpBody = jsonData
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        } catch {
+            print("Error al convertir el cuerpo del request a JSON: \(error)")
+            return
+        }
+                
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    print("Error en el request: \(error)")
+                    return
+                }
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                if (httpResponse.statusCode == 200) {
+                    do {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        let message = JSONResponse["message"] as! String
+                        DispatchQueue.main.async {
+                            titleAlert = "Aviso"
+                            alertMessage = message
+                            showAlert = true
+                        }
+                    }
+                    catch{
+                        titleAlert = "Error"
+                        alertMessage = "Algo salió mal!"
+                        showAlert = true
+                    }
+                }
+                else {
+                    do {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        let error = JSONResponse["error"] as! [String:Any]
+                        let message = error["message"] as! String
+                        DispatchQueue.main.async {
+                            alertMessage = message
+                            showAlert = true
+                        }
+                    }
+                    catch{
+                        alertMessage = "Algo salió mal"
+                        showAlert = true
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
                     
 }
 
 #Preview {
-    OrdersView()
+    ServiceOrderDetailView(carDetail: CarDetail(id: "1", fileNumber: "2", initialMileage: 10000, notes: "Sin detalles extras encontrados", createDate: "2024-08-09T06:41:03.000Z", vehicle: ["id": "2", "serialNumber": "09120912938","year": 2023, "color": "Negro", "plates": "FPS-123-503", "owner": "Luis Zapata", "model": ["id": "4", "model": "Lobo", "brand": "Ford"]], appointments: nil, services: [["id": "1", "name": "Afinación"], ["id": "2", "name": "Aceite"]], detail: ["budget": "25000", "totalCost": "50000", "departureDate" : "2024-08-09T06:41:03.000Z", "repairDays": 5, "finalMileage": 12000, "observations": "Todo correcto"], history: nil, actualStatus: "Pendiente"))
 }

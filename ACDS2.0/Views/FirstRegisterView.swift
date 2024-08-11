@@ -176,7 +176,7 @@ struct FirstRegisterView: View {
     //MARK: - Requests
     
     func verifyExistingEmail(){
-        let url = URL(string: "http://localhost:3000/auth/existsUser")!
+        let url = URL(string: "\(userData.prodUrl)/auth/existsUser")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "POST"
                 

@@ -19,6 +19,7 @@ struct CarDetailView: View {
             Text("\(car.model["model"]!) - \(car.year)")
                 .font(.largeTitle)
                 .fontWeight(.semibold)
+                .foregroundStyle(.black)
             
             Image("\(car.model["brand"]!)")
                 .resizable().scaledToFit()
@@ -29,6 +30,7 @@ struct CarDetailView: View {
             Picker("", selection: $selectedView){
                 ForEach(subViews.allCases, id: \.self){
                     Text($0.rawValue)
+                        .foregroundStyle(.black)
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
@@ -48,7 +50,7 @@ struct CarDetailView: View {
     }
     
     func servicesRequest(_ carId: String){
-        let url = URL(string: "http://localhost:3000/service-orders/vehicle/\(carId)")!
+        let url = URL(string: "\(userData.prodUrl)/service-orders/vehicle/\(carId)")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "GET"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -143,10 +145,13 @@ struct ServicesView: View {
                                         .bold()
                                         .padding(.leading, 5)
                                         .lineLimit(1)
+                                        .foregroundStyle(.black)
+                                    
                                     Text("\(toDateFromString(service.createDate)!)")
                                         .frame(maxWidth: .infinity, alignment: .trailing)
                                         .font(.footnote)
                                         .padding(.trailing, 5)
+                                        .foregroundStyle(.black)
                                 }
                                 .padding(.bottom, 2)
                                 Text("Servicio: \(formatServicesInList(service.services))")
@@ -154,6 +159,7 @@ struct ServicesView: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .font(.footnote)
                                     .padding(.horizontal, 5)
+                                    .foregroundStyle(.black)
                             }
                             .padding(.vertical, 8)
                         }
@@ -261,6 +267,7 @@ struct DetailView: View {
             }
             
         }
+        .foregroundStyle(.black)
         .padding(.bottom, 60)
     }
 }
@@ -379,6 +386,7 @@ struct OrderDetailView: View {
             Spacer()
             
         }
+        .foregroundStyle(.black)
         .padding()
     }
 

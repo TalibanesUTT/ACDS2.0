@@ -18,6 +18,12 @@ struct MainView: View {
                         Text("Inicio")
                 }
                 
+                AppointmentsView()
+                    .tabItem {
+                        Image(systemName: "calendar")
+                        Text("Citas")
+                    }
+                
                 ProfileView().tabItem {
                     Image(systemName:"line.horizontal.3")
                     Text("Perfil")

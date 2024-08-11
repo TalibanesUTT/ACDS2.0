@@ -23,6 +23,8 @@
 		CCF2F7DC2C65EAF6006F3333 /* MechanicHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7DB2C65EAF6006F3333 /* MechanicHome.swift */; };
 		CCF2F7DE2C65EBB0006F3333 /* OrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7DD2C65EBB0006F3333 /* OrdersView.swift */; };
 		CCF2F7E22C6800E1006F3333 /* QRCodeGenerate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7E12C6800E1006F3333 /* QRCodeGenerate.swift */; };
+		CCF2F7E42C6814DA006F3333 /* AppointmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7E32C6814D9006F3333 /* AppointmentsView.swift */; };
+		CCF2F7E62C683148006F3333 /* AppointmentsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7E52C683148006F3333 /* AppointmentsDetailView.swift */; };
 		CCF3CB152C61AA3900E694BB /* CarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF3CB142C61AA3900E694BB /* CarData.swift */; };
 		CCF3CB172C61E6EA00E694BB /* CarDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF3CB162C61E6EA00E694BB /* CarDetailView.swift */; };
 /* End PBXBuildFile section */
@@ -45,6 +47,8 @@
 		CCF2F7DB2C65EAF6006F3333 /* MechanicHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MechanicHome.swift; sourceTree = "<group>"; };
 		CCF2F7DD2C65EBB0006F3333 /* OrdersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersView.swift; sourceTree = "<group>"; };
 		CCF2F7E12C6800E1006F3333 /* QRCodeGenerate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerate.swift; sourceTree = "<group>"; };
+		CCF2F7E32C6814D9006F3333 /* AppointmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentsView.swift; sourceTree = "<group>"; };
+		CCF2F7E52C683148006F3333 /* AppointmentsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentsDetailView.swift; sourceTree = "<group>"; };
 		CCF3CB142C61AA3900E694BB /* CarData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarData.swift; sourceTree = "<group>"; };
 		CCF3CB162C61E6EA00E694BB /* CarDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -121,6 +125,8 @@
 				CCF3CB162C61E6EA00E694BB /* CarDetailView.swift */,
 				CCF2F7DB2C65EAF6006F3333 /* MechanicHome.swift */,
 				CCF2F7DD2C65EBB0006F3333 /* OrdersView.swift */,
+				CCF2F7E32C6814D9006F3333 /* AppointmentsView.swift */,
+				CCF2F7E52C683148006F3333 /* AppointmentsDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -218,7 +224,9 @@
 				CC60DA0C2C5A9F5F0014F5F3 /* UserData.swift in Sources */,
 				CCF3CB172C61E6EA00E694BB /* CarDetailView.swift in Sources */,
 				CCF2F7E22C6800E1006F3333 /* QRCodeGenerate.swift in Sources */,
+				CCF2F7E42C6814DA006F3333 /* AppointmentsView.swift in Sources */,
 				CC44B6762C589AA600916C27 /* ACDS2_0App.swift in Sources */,
+				CCF2F7E62C683148006F3333 /* AppointmentsDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

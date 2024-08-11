@@ -84,7 +84,7 @@ struct PassRecoverView: View {
     //MARK: - Requests
     
     func recoverPasswordRequest(){
-        let url = URL(string: "http://localhost:3000/user-management/recoverPassword")!
+        let url = URL(string: "\(userData.prodUrl)/user-management/recoverPassword")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "POST"
         

@@ -158,7 +158,7 @@ struct CodeVerifyView: View {
     }
     
     func resendVerificationCode(){
-        let url = URL(string: "http:/localhost:3000/auth/resendVerificationCode/\(userData.id)")!
+        let url = URL(string: "\(userData.prodUrl)/auth/resendVerificationCode/\(userData.id)")!
                 var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
                 request.httpMethod = "GET"
                 

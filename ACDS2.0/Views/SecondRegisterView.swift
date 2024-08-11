@@ -149,7 +149,7 @@ struct SecondRegisterView: View {
     //MARK: - Requests
     
     func registerRequest() {
-        let url = URL(string: "http://localhost:3000/auth/register")!
+        let url = URL(string: "\(userData.prodUrl)/auth/register")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "POST"
         
@@ -223,7 +223,7 @@ struct SecondRegisterView: View {
     }
     
     func updateInformationRequest(){
-        let url = URL(string: "http://localhost:3000/user-management/updateProfile/\(userData.id)")!
+        let url = URL(string: "\(userData.prodUrl)/user-management/updateProfile/\(userData.id)")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "PUT"
                 

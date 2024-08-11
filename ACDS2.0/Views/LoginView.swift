@@ -197,7 +197,7 @@ struct LoginView: View {
     //MARK: - Requests
     
     func loginRequest(){
-        let url = URL(string: "http://localhost:3000/auth/login")!
+        let url = URL(string: "\(userData.prodUrl)/auth/login")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "POST"
                 
@@ -259,7 +259,7 @@ struct LoginView: View {
     }
     
     func getProfile() {
-        let url = URL(string: "http://localhost:3000/profile")!
+        let url = URL(string: "\(userData.prodUrl)/profile")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "GET"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")

@@ -15,11 +15,13 @@ struct MechanicHome: View {
                 OrdersView().tabItem({
                     Image(systemName: "house")
                     Text("Inicio")
+                        .foregroundStyle(.black)
                 })
                 
                 ProfileView().tabItem {
                     Image(systemName:"line.horizontal.3")
                     Text("Perfil")
+                        .foregroundStyle(.black)
                 }
             }
         }
