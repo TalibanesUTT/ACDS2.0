@@ -175,6 +175,12 @@ struct LoginView: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
+            .onAppear {
+                WatchConnector.shared.startSession()
+                if (!userData.token.isEmpty){
+                    navigateToHome()
+                }
+            }
         }
     }
              
@@ -230,7 +236,9 @@ struct LoginView: View {
                         DispatchQueue.main.async {
                             self.userData.token = JSONResponse["data"] as! String
                             print(self.userData.token)
+                            WatchConnector.shared.sendToken(self.userData.token)
                             getProfile()
+                         
                         }
                     }
                     catch{

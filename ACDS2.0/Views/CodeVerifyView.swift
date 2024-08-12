@@ -132,20 +132,11 @@ struct CodeVerifyView: View {
             
             if let httpResponse = response as? HTTPURLResponse {
                 if (httpResponse.statusCode == 200) {
-                    do {
-                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
-                        DispatchQueue.main.async {
-                            navigateToLogin()
-                        }
-                    }
-                    catch{
-                        titleAlert = "Error"
-                        alertMessage = "Algo salió mal!"
-                        showAlert = true
+                    DispatchQueue.main.async {
+                        navigateToLogin()
                     }
                 }
                 else {
-                    
                     DispatchQueue.main.async {
                         titleAlert = "Error"
                         alertMessage = "No se pudo verificar "

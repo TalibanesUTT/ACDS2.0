@@ -534,17 +534,7 @@ struct ProfileView: View {
                 
             if let httpResponse = response as? HTTPURLResponse {
                 if (httpResponse.statusCode == 200) {
-                    do {
-                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
-                        let msg = JSONResponse["message"] as! String
-                        DispatchQueue.main.async {
-                            
-                        }
-                    }
-                    catch{
-                        alertMessage = "Algo salió mal!"
-                        showAlert = true
-                    }
+                   
                 }
                 else {
                     do {

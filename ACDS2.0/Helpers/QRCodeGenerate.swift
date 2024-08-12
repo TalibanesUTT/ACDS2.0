@@ -17,7 +17,7 @@ struct QRCodeGenerate: View {
         Image(uiImage: generateQR(data))
             .interpolation(.none)
             .resizable()
-            .frame(width: 200, height: 200)
+            .frame(width: 250, height: 250)
             
     }
     

@@ -406,7 +406,7 @@ struct ServiceOrderDetailView: View {
                     .background(.redBtn)
                     .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 10)))
                     .foregroundStyle(.white)
-                QRCodeGenerate(data: ["id": carDetail.id, "onHold": false, "rollback": false, "cancel": false])
+                QRCodeGenerate(data: ["id": carDetail.id, "token" : userData.token])
                     .padding(.bottom, 60)
                 
                 Button(action: {

@@ -14,6 +14,7 @@ struct PassRecoverView: View {
     @State private var alertMessage = ""
     @State var titleAlert: String = ""
     @State var notAbleToComplete: Bool = true
+    @State var userData = UserData.shared
     @EnvironmentObject var navigationManager: NavigationManager
     
     var body: some View {
