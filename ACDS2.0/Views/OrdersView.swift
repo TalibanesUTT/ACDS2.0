@@ -17,91 +17,110 @@ struct OrdersView: View {
     @State private var selectedCustomer: String = "Todos"
     
     var body: some View {
-        ScrollView{
-            
-            Text("Órdenes de servicio")
-                .font(.largeTitle)
-                .bold()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
+       ZStack{
+           Color("BG").ignoresSafeArea()
+            ScrollView{
+                Text("Órdenes de servicio")
+                    .font(.largeTitle)
+                    .bold()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .foregroundStyle(.black)
+                
+                HStack{
+                    Text("Cliente: ")
+                    Menu(selectedCustomer) {
+                        ForEach(customers, id: \.id) { customer in
+                            Button(action: {
+                                selectedCustomer = customer.name
+                                if (selectedCustomer == "Todos"){
+                                    pendingServicesRequest()
+                                } else {
+                                    customerServices(customer.id)
+                                }
+                            }, label: {
+                                Text("\(customer.name) \(customer.lastName)")
+                            })
+                        }
+                    }
+                }
                 .foregroundStyle(.black)
-            
-            HStack{
-                Text("Cliente: ")
-                Menu(selectedCustomer) {
-                    ForEach(customers, id: \.id) { customer in
-                        Button(action: {
-                            selectedCustomer = customer.name
-                            if (selectedCustomer == "Todos"){
-                                pendingServicesRequest()
-                            } else {
-                                customerServices(customer.id)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading)
+                Divider()
+                
+                
+                LazyVStack{
+                    ForEach(carServices){ service in
+                        NavigationLink(destination: ServiceOrderDetailView(carDetail: service), label: {
+                            ZStack{
+                                Color(Color.gray.opacity(0.1))
+                                VStack{
+                                    HStack{
+                                        Text("\(service.actualStatus ?? "Sin estatus")")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .font(.headline)
+                                            .bold()
+                                            .padding(.leading, 5)
+                                            .lineLimit(1)
+                                            .foregroundStyle(.black)
+                                        
+                                        Text("\(toDateFromString(service.createDate)!)")
+                                            .frame(maxWidth: .infinity, alignment: .trailing)
+                                            .font(.footnote)
+                                            .padding(.trailing, 5)
+                                            .foregroundStyle(.black)
+                                    }
+                                    Text("Servicios: \(formatServicesInList(service.services))")
+                                        .lineLimit(2)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .font(.footnote)
+                                        .padding(.horizontal, 5)
+                                        .foregroundStyle(.black)
+                                    
+                                    if let vehicleDict = service.vehicle["model"] as? [String: Any],
+                                        let brand = vehicleDict["brand"] as? String,
+                                        let model = vehicleDict["model"] as? String,
+                                       let year = service.vehicle["year"]
+                                    {
+                                        Text("Vehiculo: \(brand) \(model) \(year)")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .font(.headline)
+                                            .bold()
+                                            .padding(.leading, 5)
+                                            .padding(.top, 5)
+                                            .lineLimit(1)
+                                            .foregroundStyle(.black)
+                                    } else {
+                                        Text("Vehículo: Sin marca")
+                                    }
+                                    
+                                    Text("Cliente: \(service.vehicle["owner"]!)")
+                                        .bold()
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 5)
+                                        .background(.redBtn)
+                                        .foregroundStyle(.white)
+                                }
+                                .padding(.top,5)
                             }
-                        }, label: {
-                            Text("\(customer.name) \(customer.lastName)")
+                            .cornerRadius(8)
                         })
                     }
                 }
+                .padding()
+                .alert(isPresented: $showAlert) {
+                    Alert(
+                        title: Text("Error"),
+                        message: Text(alertMessage),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }.onAppear(perform: {
+                    selectedCustomer = "Todos"
+                    pendingServicesRequest()
+                    customersRequest()
+                })
             }
-            .foregroundStyle(.black)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading)
-            Divider()
-            
-            
-            LazyVStack{
-                ForEach(carServices){ service in
-                    NavigationLink(destination: ServiceOrderDetailView(carDetail: service), label: {
-                        ZStack{
-                            Color(Color.gray.opacity(0.1))
-                            VStack{
-                                HStack{
-                                    Text("\(service.actualStatus ?? "Sin estatus")")
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .font(.headline)
-                                        .bold()
-                                        .padding(.leading, 5)
-                                        .lineLimit(1)
-                                        .foregroundStyle(.black)
-                                    
-                                    Text("\(toDateFromString(service.createDate)!)")
-                                        .frame(maxWidth: .infinity, alignment: .trailing)
-                                        .font(.footnote)
-                                        .padding(.trailing, 5)
-                                        .foregroundStyle(.black)
-                                }
-                                Text("Servicio: \(formatServicesInList(service.services))")
-                                    .lineLimit(2)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .font(.footnote)
-                                    .padding(.horizontal, 5)
-                                    .foregroundStyle(.black)
-                                
-                                Text("Cliente: \(service.vehicle["owner"]!)")
-                                    .bold()
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 5)
-                                    .background(.redBtn)
-                                    .foregroundStyle(.white)
-                            }
-                            .padding(.top,5)
-                        }
-                        .cornerRadius(8)
-                    })
-                }
-            }
-            .padding()
-            .alert(isPresented: $showAlert) {
-                Alert(
-                    title: Text("Error"),
-                    message: Text(alertMessage),
-                    dismissButton: .default(Text("OK"))
-                )
-            }.onAppear(perform: {
-                selectedCustomer = "Todos"
-                pendingServicesRequest()
-                customersRequest()
-            })
         }
     }
     
@@ -177,7 +196,7 @@ struct OrdersView: View {
                                     vehicle: dict["vehicle"] as! [String:Any],
                                     appointments: dict["appointment"] as? [String:Any],
                                     services: dict["services"] as! [[String:Any]],
-                                    detail: dict["detail"] as! [String:Any],
+                                      detail: dict["detail"] as? [String:Any] ?? [:],
                                     history: dict["history"] as? [String:Any],
                                     actualStatus: dict["actualStatus"] as? String)
                         }
@@ -290,7 +309,7 @@ struct OrdersView: View {
                                     vehicle: dict["vehicle"] as! [String:Any],
                                     appointments: dict["appointment"] as? [String:Any],
                                     services: dict["services"] as! [[String:Any]],
-                                    detail: dict["detail"] as! [String:Any],
+                                      detail: dict["detail"] as? [String:Any] ?? [:],
                                     history: dict["history"] as? [String:Any],
                                     actualStatus: dict["actualStatus"] as? String)
                         }
@@ -337,165 +356,169 @@ struct ServiceOrderDetailView: View {
     @State var isRevert: Bool = false
     
     var body: some View {
-        VStack{
-            HStack{
-                Text("Fecha de servicio")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(toDateFromString(carDetail.createDate)!)")
-                    .font(.callout)
-            }
-            .foregroundStyle(.black)
-            Divider()
-            HStack{
-                Text("Estatus")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.actualStatus ?? "Sin estatus")")
-                    .font(.callout)
-            }
-            .foregroundStyle(.black)
-            Divider()
-            HStack{
-                Text("Notas iniciales")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.notes)")
-                    .font(.callout)
-            }
-            .foregroundStyle(.black)
-            Divider()
-            HStack{
-                Text("Kilometraje inicial")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.initialMileage) km")
-                    .font(.callout)
-            }
-            .foregroundStyle(.black)
-            Divider()
-            HStack{
-                Text("Servicios")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(formatServicesInList(carDetail.services))")
-                    .font(.callout)
-            }
-            .foregroundStyle(.black)
-            Divider()
-            HStack{
-                Text("Presupuesto")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(formatStringToCurrency(carDetail.detail["budget"] as! String)!)").font(.callout)
-            }
-            .foregroundStyle(.black)
-            Spacer()
+        ZStack{
+            Color("BG").ignoresSafeArea()
             VStack{
-                Text("QR de la orden")
-                    .font(.title)
-                    .bold()
-                    .padding(.vertical, 8)
-                    .frame(maxWidth: .infinity)
-                    .background(.redBtn)
-                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 10)))
-                    .foregroundStyle(.white)
-                QRCodeGenerate(data: ["id": carDetail.id, "token" : userData.token])
-                    .padding(.bottom, 60)
-                
-                Button(action: {
-                    alertType = 1
-                    titleAlert = "Aviso"
-                    alertMessage = "Estás a punto de cancelar esta orden de servicio. Por favor, introduce comentarios explicando las razones."
-                    showTextAlert = true
-                },
-                    label: {
-                    Text("Cancelar")
-                        .padding(.vertical, 15)
-                        .padding(.horizontal, 8)
-                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
-                        .foregroundStyle(.white)
-                        .background(Color.redBtn)
-                        .bold()
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                })
-                
                 HStack{
+                    Text("Fecha de servicio")
+                        .bold()
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(toDateFromString(carDetail.createDate)!)")
+                        .font(.footnote)
+                }
+                .foregroundStyle(.black)
+                Divider()
+                HStack{
+                    Text("Estatus")
+                        .bold()
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(carDetail.actualStatus ?? "Sin estatus")")
+                        .font(.footnote)
+                }
+                .foregroundStyle(.black)
+                Divider()
+                HStack{
+                    Text("Notas iniciales")
+                        .bold()
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(carDetail.notes)")
+                        .font(.footnote)
+                }
+                .foregroundStyle(.black)
+                Divider()
+                HStack{
+                    Text("Kilometraje inicial")
+                        .bold()
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(carDetail.initialMileage) km")
+                        .font(.footnote)
+                }
+                .foregroundStyle(.black)
+                Divider()
+                HStack{
+                    Text("Servicios")
+                        .bold()
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(formatServicesInList(carDetail.services))")
+                        .font(.footnote)
+                }
+                .foregroundStyle(.black)
+                Divider()
+                HStack{
+                    Text("Presupuesto")
+                        .bold()
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(formatStringToCurrency(carDetail.detail["budget"] as? String ?? "0") ?? "Sin detalle")
+                        .font(.footnote)
+                }
+                .foregroundStyle(.black)
+                Spacer()
+                VStack{
+                    Text("QR de la orden")
+                        .font(.title)
+                        .bold()
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity)
+                        .background(.redBtn)
+                        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 10)))
+                        .foregroundStyle(.white)
+                    QRCodeGenerate(data: ["id": carDetail.id, "token" : userData.token])
+                        .padding(.bottom, 60)
+                    
                     Button(action: {
-                        alertType = 2
+                        alertType = 1
                         titleAlert = "Aviso"
-                        alertMessage = "Estás a punto de poner en espera esta orden de servicio. Esto impedirá que la orden pueda continuar con su flujo. Por favor, introduce comentarios explicando las razones."
+                        alertMessage = "Estás a punto de cancelar esta orden de servicio. Por favor, introduce comentarios explicando las razones."
                         showTextAlert = true
                     },
                         label: {
-                        Text("En espera")
+                        Text("Cancelar")
                             .padding(.vertical, 15)
                             .padding(.horizontal, 8)
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
                             .foregroundStyle(.white)
-                            .background(Color.yellow)
+                            .background(Color.redBtn)
                             .bold()
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     })
-                
-                    Button(action: {
-                        alertType = 3
-                        titleAlert = "Aviso"
-                        isRevert = true
-                        alertMessage = "Estás a punto de revertir el estatus actual de la orden de servicio. Eso regresará la orden de servicio a su penúltimo estatus activo. ¿Deseas continuar?"
-                        showAlert = true
-                    }, label: {
-                        Text("Revertir")
-                            .padding(.vertical, 15)
-                            .padding(.horizontal, 8)
-                            .frame(maxWidth: .infinity)
-                            .foregroundStyle(.white)
-                            .background(Color.blue)
-                            .bold()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    })
-                }
-            }
-        }
-        .padding()
-        .alert("Aviso", isPresented: $showTextAlert, actions: {
-            TextField("Comentarios", text: $comments)
-            Button("Cancelar", role: .cancel){comments = ""}
-            Button("Confirmar"){
-                if (alertType == 1){
-                    updateStatusRequest(false, true, false)
                     
+                    HStack{
+                        Button(action: {
+                            alertType = 2
+                            titleAlert = "Aviso"
+                            alertMessage = "Estás a punto de poner en espera esta orden de servicio. Esto impedirá que la orden pueda continuar con su flujo. Por favor, introduce comentarios explicando las razones."
+                            showTextAlert = true
+                        },
+                            label: {
+                            Text("En espera")
+                                .padding(.vertical, 15)
+                                .padding(.horizontal, 8)
+                                .frame(maxWidth: .infinity)
+                                .foregroundStyle(.white)
+                                .background(Color.yellow)
+                                .bold()
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        })
+                    
+                        Button(action: {
+                            alertType = 3
+                            titleAlert = "Aviso"
+                            isRevert = true
+                            alertMessage = "Estás a punto de revertir el estatus actual de la orden de servicio. Eso regresará la orden de servicio a su penúltimo estatus activo. ¿Deseas continuar?"
+                            showAlert = true
+                        }, label: {
+                            Text("Revertir")
+                                .padding(.vertical, 15)
+                                .padding(.horizontal, 8)
+                                .frame(maxWidth: .infinity)
+                                .foregroundStyle(.white)
+                                .background(Color.blue)
+                                .bold()
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        })
+                    }
                 }
-                if (alertType == 3) {
-                    updateStatusRequest(true, false, false)
-                }
-                
-                if (alertType == 2) {
-                    updateStatusRequest(false, false, true)
-                }
-                comments = ""
             }
-        }, message: {
-            Text(alertMessage)
-        })
-        .alert(isPresented: $showAlert){
-            if (isRevert){
-                Alert(title: Text(titleAlert), message: Text(alertMessage), primaryButton: .cancel(), secondaryButton: .default(Text("Confirmar"), action: {
-                    updateStatusRequest(true, false, false)
-                    isRevert = false
-                }))
-            } else {
-                Alert(
-                    title: Text(titleAlert),
-                    message: Text(alertMessage),
-                    dismissButton: .default(Text("OK"))
-                )
+            .padding()
+            .alert("Aviso", isPresented: $showTextAlert, actions: {
+                TextField("Comentarios", text: $comments)
+                Button("Cancelar", role: .cancel){comments = ""}
+                Button("Confirmar"){
+                    if (alertType == 1){
+                        updateStatusRequest(false, true, false)
+                        
+                    }
+                    if (alertType == 3) {
+                        updateStatusRequest(true, false, false)
+                    }
+                    
+                    if (alertType == 2) {
+                        updateStatusRequest(false, false, true)
+                    }
+                    comments = ""
+                }
+            }, message: {
+                Text(alertMessage)
+            })
+            .alert(isPresented: $showAlert){
+                if (isRevert){
+                    Alert(title: Text(titleAlert), message: Text(alertMessage), primaryButton: .cancel(), secondaryButton: .default(Text("Confirmar"), action: {
+                        updateStatusRequest(true, false, false)
+                        isRevert = false
+                    }))
+                } else {
+                    Alert(
+                        title: Text(titleAlert),
+                        message: Text(alertMessage),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
             }
         }
     }
@@ -625,5 +648,6 @@ struct ServiceOrderDetailView: View {
 }
 
 #Preview {
-    ServiceOrderDetailView(carDetail: CarDetail(id: "1", fileNumber: "2", initialMileage: 10000, notes: "Sin detalles extras encontrados", createDate: "2024-08-09T06:41:03.000Z", vehicle: ["id": "2", "serialNumber": "09120912938","year": 2023, "color": "Negro", "plates": "FPS-123-503", "owner": "Luis Zapata", "model": ["id": "4", "model": "Lobo", "brand": "Ford"]], appointments: nil, services: [["id": "1", "name": "Afinación"], ["id": "2", "name": "Aceite"]], detail: ["budget": "25000", "totalCost": "50000", "departureDate" : "2024-08-09T06:41:03.000Z", "repairDays": 5, "finalMileage": 12000, "observations": "Todo correcto"], history: nil, actualStatus: "Pendiente"))
+    OrdersView()
+    //ServiceOrderDetailView(carDetail: CarDetail(id: "1", fileNumber: "2", initialMileage: 10000, notes: "Sin detalles extras encontrados", createDate: "2024-08-09T06:41:03.000Z", vehicle: ["id": "2", "serialNumber": "09120912938","year": 2023, "color": "Negro", "plates": "FPS-123-503", "owner": "Luis Zapata", "model": ["id": "4", "model": "Lobo", "brand": "Ford"]], appointments: nil, services: [["id": "1", "name": "Afinación"], ["id": "2", "name": "Aceite"]], detail: ["budget": "25000", "totalCost": "50000", "departureDate" : "2024-08-09T06:41:03.000Z", "repairDays": 5, "finalMileage": 12000, "observations": "Todo correcto"], history: nil, actualStatus: "Pendiente"))
 }

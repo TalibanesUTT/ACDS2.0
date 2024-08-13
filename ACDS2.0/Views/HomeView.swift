@@ -158,7 +158,7 @@ struct HomeView: View {
                                     model: dict["model"] as! [String:Any],
                                     owner: dict["owner"] as! String,
                                     year: dict["year"] as! Int,
-                                    serialNumber: dict["serialNumber"] as! String)
+                                    serialNumber: dict["serialNumber"] as? String ?? "Sin numero")
                             })
                         }
                         catch{

@@ -15,38 +15,44 @@ struct CarDetailView: View {
     @State var showAlert: Bool = false
     @State var selectedView: subViews = .Services
     var body: some View {
-        VStack{
-            Text("\(car.model["model"]!) - \(car.year)")
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-                .foregroundStyle(.black)
-            
-            Image("\(car.model["brand"]!)")
-                .resizable().scaledToFit()
-                .aspectRatio(0.8, contentMode: .fit)
-        }
-        .padding(.bottom, 30)
-        VStack{
-            Picker("", selection: $selectedView){
-                ForEach(subViews.allCases, id: \.self){
-                    Text($0.rawValue)
-                        .foregroundStyle(.black)
+            ZStack{
+                Color("BG").ignoresSafeArea()
+                VStack{
+                    VStack{
+                        Text("\(car.model["model"]!) - \(car.year)")
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.black)
+                        
+                        Image("\(car.model["brand"]!)")
+                            .resizable().scaledToFit()
+                            .aspectRatio(0.8, contentMode: .fit)
+                    }
+                    .padding(.bottom, 30)
+                    VStack{
+                        Picker("", selection: $selectedView){
+                            ForEach(subViews.allCases, id: \.self){
+                                Text($0.rawValue)
+                                    .foregroundStyle(.black)
+                            }
+                        }
+                        .preferredColorScheme(.light)
+                        .pickerStyle(SegmentedPickerStyle())
+                        SegmentView(selectedView: selectedView, carServices: carServices, car: car)
+                    }
+                    .padding()
+                    .alert(isPresented: $showAlert) {
+                        Alert(
+                            title: Text("Error"),
+                            message: Text(alertMessage),
+                            dismissButton: .default(Text("OK"))
+                        )
+                    }
+                    .onAppear(perform: {
+                        servicesRequest(car.id)
+                    })
                 }
             }
-            .pickerStyle(SegmentedPickerStyle())
-            SegmentView(selectedView: selectedView, carServices: carServices, car: car)
-        }
-        .padding()
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("Error"),
-                message: Text(alertMessage),
-                dismissButton: .default(Text("OK"))
-            )
-        }
-        .onAppear(perform: {
-            servicesRequest(car.id)
-        })
     }
     
     func servicesRequest(_ carId: String){
@@ -75,7 +81,7 @@ struct CarDetailView: View {
                                     vehicle: dict["vehicle"] as! [String:Any],
                                     appointments: dict["appointment"] as? [String:Any],
                                     services: dict["services"] as! [[String:Any]],
-                                    detail: dict["detail"] as! [String:Any],
+                                      detail: dict["detail"] as? [String:Any] ?? [:],
                                     history: dict["history"] as? [String:Any],
                                     actualStatus: dict["actualStatus"] as? String)
                         }
@@ -131,40 +137,43 @@ struct SegmentView: View {
 struct ServicesView: View {
     var carServices: [CarDetail]
     var body: some View{
-        ScrollView{
-            LazyVStack{
-                ForEach(carServices){ service in
-                    NavigationLink(destination: OrderDetailView(carDetail: service), label: {
-                        ZStack{
-                            Color(Color.gray.opacity(0.1))
-                            VStack{
-                                HStack{
-                                    Text("\(service.actualStatus ?? "Sin estatus") - \(String(describing: formatStringToCurrency(service.detail["totalCost"]! as! String)!))")
+        ZStack{
+            Color("BG").ignoresSafeArea()
+            ScrollView{
+                LazyVStack{
+                    ForEach(carServices){ service in
+                        NavigationLink(destination: OrderDetailView(carDetail: service), label: {
+                            ZStack{
+                                Color(Color.gray.opacity(0.1))
+                                VStack{
+                                    HStack{
+                                        Text("\(service.actualStatus ?? "Sin estatus") - \(formatStringToCurrency(service.detail["totalCost"] as? String ?? "0") ?? "0")")
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .font(.headline)
+                                            .bold()
+                                            .padding(.leading, 5)
+                                            .lineLimit(1)
+                                            .foregroundStyle(.black)
+                                        
+                                        Text("\(toDateFromString(service.createDate)!)")
+                                            .frame(maxWidth: .infinity, alignment: .trailing)
+                                            .font(.footnote)
+                                            .padding(.trailing, 5)
+                                            .foregroundStyle(.black)
+                                    }
+                                    .padding(.bottom, 2)
+                                    Text("Servicio: \(formatServicesInList(service.services))")
+                                        .lineLimit(2)
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                        .font(.headline)
-                                        .bold()
-                                        .padding(.leading, 5)
-                                        .lineLimit(1)
-                                        .foregroundStyle(.black)
-                                    
-                                    Text("\(toDateFromString(service.createDate)!)")
-                                        .frame(maxWidth: .infinity, alignment: .trailing)
                                         .font(.footnote)
-                                        .padding(.trailing, 5)
+                                        .padding(.horizontal, 5)
                                         .foregroundStyle(.black)
                                 }
-                                .padding(.bottom, 2)
-                                Text("Servicio: \(formatServicesInList(service.services))")
-                                    .lineLimit(2)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .font(.footnote)
-                                    .padding(.horizontal, 5)
-                                    .foregroundStyle(.black)
+                                .padding(.vertical, 8)
                             }
-                            .padding(.vertical, 8)
-                        }
-                        .cornerRadius(8)
-                    })
+                            .cornerRadius(8)
+                        })
+                    }
                 }
             }
         }
@@ -217,65 +226,71 @@ struct ServicesView: View {
 struct DetailView: View {
     var car: Car
     var body: some View {
-        VStack{
-            HStack{
-                Text("Modelo")
-                    .bold()
-                    .font(.title3)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(car.model["model"]!)").font(.title3)
+        ZStack{
+            Color("BG").ignoresSafeArea()
+            VStack{
+                HStack{
+                    Text("Modelo")
+                        .bold()
+                        .font(.title3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(car.model["model"]!)").font(.title3)
+                }
+                Divider()
+                HStack{
+                    Text("Marca")
+                        .bold()
+                        .font(.title3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(car.model["brand"]!)").font(.title3)
+                }
+                Divider()
+                HStack{
+                    Text("Año")
+                        .bold()
+                        .font(.title3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(String(car.year))").font(.title3)
+                }
+                Divider()
+                HStack{
+                    Text("Placas")
+                        .bold()
+                        .font(.title3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(car.plates)").font(.title3)
+                }
+                Divider()
+                HStack{
+                    Text("Numero de serie")
+                        .bold()
+                        .font(.title3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(car.serialNumber)").font(.title2)
+                }
+                Divider()
+                HStack{
+                    Text("Color")
+                        .bold()
+                        .font(.title3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(car.color)").font(.title2)
+                }
+                
             }
-            Divider()
-            HStack{
-                Text("Marca")
-                    .bold()
-                    .font(.title3)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(car.model["brand"]!)").font(.title3)
-            }
-            Divider()
-            HStack{
-                Text("Año")
-                    .bold()
-                    .font(.title3)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(String(car.year))").font(.title3)
-            }
-            Divider()
-            HStack{
-                Text("Placas")
-                    .bold()
-                    .font(.title3)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(car.plates)").font(.title3)
-            }
-            Divider()
-            HStack{
-                Text("Numero de serie")
-                    .bold()
-                    .font(.title3)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(car.serialNumber)").font(.title2)
-            }
-            Divider()
-            HStack{
-                Text("Color")
-                    .bold()
-                    .font(.title3)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(car.color)").font(.title2)
-            }
-            
+            .foregroundStyle(.black)
+            .padding(.bottom, 60)
         }
-        .foregroundStyle(.black)
-        .padding(.bottom, 60)
     }
 }
 
 struct OrderDetailView: View {
     var carDetail: CarDetail
     var body: some View {
-        VStack{
+        
+        ZStack{
+            Color("BG").ignoresSafeArea()
+            VStack{
             HStack{
                 Text("Fecha de servicio")
                     .bold()
@@ -335,7 +350,7 @@ struct OrderDetailView: View {
                     .bold()
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(formatStringToCurrency(carDetail.detail["budget"] as! String)!)").font(.callout)
+                Text("\(formatStringToCurrency(carDetail.detail["budget"] as? String ?? "0")!)").font(.callout)
             }
             Divider()
             HStack{
@@ -343,7 +358,7 @@ struct OrderDetailView: View {
                     .bold()
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(formatStringToCurrency(carDetail.detail["totalCost"] as! String)!)")
+                Text("\(formatStringToCurrency(carDetail.detail["totalCost"] as? String ?? "0")!)")
                     .font(.callout)
             }
             Divider()
@@ -352,7 +367,7 @@ struct OrderDetailView: View {
                     .bold()
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(toDateFromString(carDetail.detail["departureDate"] as! String)!)")
+                Text("\(toDateFromString(carDetail.detail["departureDate"] as? String ?? "Fecha no disponible") ?? "Fecha no disponible")")
                     .font(.callout)
             }
             Divider()
@@ -361,7 +376,8 @@ struct OrderDetailView: View {
                     .bold()
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.detail["repairDays"]!)")
+                Text("\(carDetail.detail["repairDays"] as? String ?? "No disponibles")")
+
                     .font(.callout)
             }
             Divider()
@@ -370,7 +386,7 @@ struct OrderDetailView: View {
                     .bold()
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.detail["finalMileage"]!) km")
+                Text("\(carDetail.detail["finalMileage"] as? String ?? "No disponible") km")
                     .font(.callout)
             }
             Divider()
@@ -379,15 +395,16 @@ struct OrderDetailView: View {
                     .bold()
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.detail["observations"]!)")
+                Text("\(carDetail.detail["observations"] as? String ?? "Sin observaciones")")
                     .font(.callout)
             }
             
             Spacer()
             
         }
-        .foregroundStyle(.black)
-        .padding()
+            .padding()
+            .foregroundStyle(.black)
+        }
     }
 
     func formatServicesInList(_ services: [[String:Any]]) -> String {
@@ -450,5 +467,6 @@ struct OrderDetailView: View {
 
 
 #Preview {
-    OrderDetailView(carDetail: CarDetail(id: "1", fileNumber: "2", initialMileage: 10000, notes: "Sin detalles extras encontrados", createDate: "1/01/2024", vehicle: ["id": "2", "serialNumber": "09120912938","year": 2023, "color": "Negro", "plates": "FPS-123-503", "owner": "Luis Zapata", "model": ["id": "4", "model": "Lobo", "brand": "Ford"]], appointments: nil, services: [["id": "1", "name": "Afinación"], ["id": "2", "name": "Aceite"]], detail: ["budget": 25000, "totalCost": 50000, "departureDate" : "04/04/2024", "repairDays": 5, "finalMileage": 12000, "observations": "Todo correcto"], history: nil, actualStatus: "Pendiente"))
+    //CarDetailView(car: Car(id: "1", color: "", plates: "90239i320", model: ["model": "Lobo", "brand": "Ford"], owner: "Luis", year: 2023, serialNumber: "ekkd"))
+    OrderDetailView(carDetail: CarDetail(id: "1", fileNumber: "2", initialMileage: 10000, notes: "Sin detalles extras encontrados", createDate: "2024-08-10T10:52:02.000Z", vehicle: ["id": "2", "serialNumber": "09120912938","year": 2023, "color": "Negro", "plates": "FPS-123-503", "owner": "Luis Zapata", "model": ["id": "4", "model": "Lobo", "brand": "Ford"]], appointments: nil, services: [["id": "1", "name": "Afinación"], ["id": "2", "name": "Aceite"]], detail: ["budget": 25000, "totalCost": 50000, "departureDate" : "2024-08-10T10:52:02.000Z", "repairDays": 5, "finalMileage": 12000, "observations": "Todo correcto"], history: nil, actualStatus: "Pendiente"))
 }

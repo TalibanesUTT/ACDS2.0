@@ -12,6 +12,9 @@
 		CC44B67A2C589AA800916C27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC44B6792C589AA800916C27 /* Assets.xcassets */; };
 		CC44B67D2C589AA800916C27 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC44B67C2C589AA800916C27 /* Preview Assets.xcassets */; };
 		CC44B6842C589C9000916C27 /* logo.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CC44B6832C589C9000916C27 /* logo.jpg */; };
+		CC4F5FCE2C6A9BC200001596 /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC4F5FCD2C6A9BC100001596 /* WatchKit.framework */; };
+		CC4F5FD02C6AA12200001596 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC4F5FCF2C6AA12200001596 /* WatchConnectivity.framework */; };
+		CC4F5FD22C6AAE7700001596 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4F5FD12C6AAE7700001596 /* UserData.swift */; };
 		CC60DA0C2C5A9F5F0014F5F3 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA0B2C5A9F5F0014F5F3 /* UserData.swift */; };
 		CC60DA0F2C5AA70A0014F5F3 /* FirstRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA0E2C5AA70A0014F5F3 /* FirstRegisterView.swift */; };
 		CC60DA112C5AA7F80014F5F3 /* SecondRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA102C5AA7F80014F5F3 /* SecondRegisterView.swift */; };
@@ -68,6 +71,9 @@
 		CC44B6792C589AA800916C27 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC44B67C2C589AA800916C27 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CC44B6832C589C9000916C27 /* logo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = logo.jpg; sourceTree = "<group>"; };
+		CC4F5FCD2C6A9BC100001596 /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS10.5.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
+		CC4F5FCF2C6AA12200001596 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
+		CC4F5FD12C6AAE7700001596 /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		CC60DA0B2C5A9F5F0014F5F3 /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		CC60DA0E2C5AA70A0014F5F3 /* FirstRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstRegisterView.swift; sourceTree = "<group>"; };
 		CC60DA102C5AA7F80014F5F3 /* SecondRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondRegisterView.swift; sourceTree = "<group>"; };
@@ -99,6 +105,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC4F5FD02C6AA12200001596 /* WatchConnectivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,6 +114,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCB19A192C6A095D0094A775 /* WatchConnectivity.framework in Frameworks */,
+				CC4F5FCE2C6A9BC200001596 /* WatchKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +201,7 @@
 				CCB19A072C6A08E80094A775 /* ContentView.swift */,
 				CCB19A092C6A08EB0094A775 /* Assets.xcassets */,
 				CCB19A0B2C6A08EB0094A775 /* Preview Content */,
+				CC4F5FD12C6AAE7700001596 /* UserData.swift */,
 			);
 			path = "ACdSWatch Watch App";
 			sourceTree = "<group>";
@@ -208,6 +217,8 @@
 		CCB19A172C6A095C0094A775 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC4F5FCF2C6AA12200001596 /* WatchConnectivity.framework */,
+				CC4F5FCD2C6A9BC100001596 /* WatchKit.framework */,
 				CCB19A182C6A095D0094A775 /* WatchConnectivity.framework */,
 			);
 			name = Frameworks;
@@ -351,6 +362,7 @@
 			files = (
 				CCB19A082C6A08E80094A775 /* ContentView.swift in Sources */,
 				CCB19A1B2C6A0A2A0094A775 /* WatchToiOSConnector.swift in Sources */,
+				CC4F5FD22C6AAE7700001596 /* UserData.swift in Sources */,
 				CCB19A062C6A08E80094A775 /* ACdSWatchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -586,7 +598,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 9.6;
+				WATCHOS_DEPLOYMENT_TARGET = 8.6;
 			};
 			name = Debug;
 		};
@@ -619,7 +631,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 9.6;
+				WATCHOS_DEPLOYMENT_TARGET = 8.6;
 			};
 			name = Release;
 		};

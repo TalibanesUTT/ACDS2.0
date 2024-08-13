@@ -32,6 +32,7 @@ struct CodeVerifyView: View {
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 10)
                     .font(.title2)
+                    .foregroundStyle(.black)
                     
                 
                 Text("Código de verificación")
@@ -50,6 +51,7 @@ struct CodeVerifyView: View {
                     .cornerRadius(10)
                     .padding(.bottom,30)
                     .keyboardType(.numberPad)
+                    .foregroundStyle(.black)
                 
                 Button(action: {verifyCodeRequest()}, label: {
                     Text("Enviar código")
@@ -73,6 +75,7 @@ struct CodeVerifyView: View {
                                 .font(.footnote)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         })
+                        .foregroundStyle(.black)
                     }
                     
                     
@@ -87,15 +90,18 @@ struct CodeVerifyView: View {
                                     disableResend = false
                                 }
                             })
+                            .foregroundStyle(.black)
                         
                         Button(action: {resendVerificationCode()}, label: {
                             Text("Reenviar codigo")
                                 .font(.footnote)
                                 .frame(maxWidth: .infinity, alignment: .trailing)
+                                
                         })
                         .disabled(disableResend)
                         
                     }
+                    
                 }
                 Spacer()
         }.padding()

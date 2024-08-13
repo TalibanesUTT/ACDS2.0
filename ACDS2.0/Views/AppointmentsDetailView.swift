@@ -22,6 +22,8 @@ struct AppointmentsDetailView: View {
     @State var titleAlert: String = ""
     @State var invalidDates : [String]? = []
     @ObservedObject var userData = UserData.shared
+    @State private var keyboardHeight: CGFloat = 0
+
 
     let dateRange: [Date] = {
         let timeZone = TimeZone(identifier: "America/Mexico_City")!
@@ -70,123 +72,129 @@ struct AppointmentsDetailView: View {
 
     
     var body: some View {
-        VStack{
-            Text("Razón")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.headline)
-                .foregroundStyle(.black)
-            
-            TextField("", text: $reasonText)
-                .onChange(of: reasonText, {
-                    reasonError = invalidReason(reasonText)
-                    checkForm()
-                })
-                .padding(.all,10)
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(10)
-                .keyboardType(.default)
-                .foregroundStyle(.black)
-                .padding((reasonError != nil) ? .top : .bottom, (reasonError != nil) ? 0 : 30)
-            
-            if let errorMessage = reasonError {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .font(.caption)
-                    .frame(maxWidth: .infinity,alignment: .leading)
-                    .padding(.bottom, 30)
-            }
-            
-            Text("Fecha")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.headline)
-                .foregroundStyle(.black)
-            
-            DatePicker("", selection: $selectedDate, in: dateRange.first!...dateRange.last!, displayedComponents: [.date])
-                .datePickerStyle(.graphical)
-                .onChange(of: selectedDate, perform: { newDate in
-                    let calendar = Calendar.current
-            
-                    if !dateRange.contains(selectedDate) {
-                        selectedDate = dateRange.first(where: { $0 > selectedDate }) ?? dateRange.first!
-                    }
-                    
-                    let selectedTime = calendar.date(bySettingHour: calendar.component(.hour, from: selectedHour), minute: calendar.component(.minute, from: selectedHour), second: 0, of: newDate)!
-                    
-                    let currentTime = Date()
-                    let eveningTime = calendar.date(bySettingHour: 18, minute: 30, second: 0, of: currentTime)!
+        ZStack{
+            Color("BG").ignoresSafeArea()
+            VStack{
+                Spacer().frame(height: keyboardHeight)
+                Text("Razón")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.headline)
+                    .foregroundStyle(.black)
+                
+                TextField("", text: $reasonText)
+                    .onChange(of: reasonText, {
+                        reasonError = invalidReason(reasonText)
+                        checkForm()
+                    })
+                    .padding(.all,10)
+                    .background(Color.gray.opacity(0.3))
+                    .cornerRadius(10)
+                    .keyboardType(.default)
+                    .foregroundStyle(.black)
+                    .padding((reasonError != nil) ? .top : .bottom, (reasonError != nil) ? 0 : 30)
+                
+                if let errorMessage = reasonError {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .frame(maxWidth: .infinity,alignment: .leading)
+                        .padding(.bottom, 30)
+                }
+                
+                Text("Fecha")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.headline)
+                    .foregroundStyle(.black)
+                
+                DatePicker("", selection: $selectedDate, in: dateRange.first!...dateRange.last!, displayedComponents: [.date])
+                    .datePickerStyle(.graphical)
+                    .onChange(of: selectedDate, perform: { newDate in
+                        let calendar = Calendar.current
+                
+                        if !dateRange.contains(selectedDate) {
+                            selectedDate = dateRange.first(where: { $0 > selectedDate }) ?? dateRange.first!
+                        }
+                        
+                        let selectedTime = calendar.date(bySettingHour: calendar.component(.hour, from: selectedHour), minute: calendar.component(.minute, from: selectedHour), second: 0, of: newDate)!
+                        
+                        let currentTime = Date()
+                        let eveningTime = calendar.date(bySettingHour: 18, minute: 30, second: 0, of: currentTime)!
 
-                    if calendar.isDate(selectedTime, inSameDayAs: currentTime) && selectedTime > eveningTime {
-                        if let nextDay = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: selectedTime)),
-                           let nextDayAt9AM = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: nextDay) {
-                            selectedDate = nextDayAt9AM
+                        if calendar.isDate(selectedTime, inSameDayAs: currentTime) && selectedTime > eveningTime {
+                            if let nextDay = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: selectedTime)),
+                               let nextDayAt9AM = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: nextDay) {
+                                selectedDate = nextDayAt9AM
+                            }
+                        }
+                        
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        dateFormatter.timeZone = TimeZone(identifier: "America/Mexico_City")
+                        let dateString = dateFormatter.string(from: selectedDate)
+                        
+                        if (invalidDates!.contains(dateString)){
+                            print("si")
+                            selectedDate = dateRange.first(where: { $0 > selectedDate }) ?? dateRange.first!
+                            
+                            alertMessage = "Ya tienes una cita para esta fecha"
+                            titleAlert = "Aviso"
+                            showAlert = true
+                            
+                        }
+                    })
+                    .colorScheme(.light)
+                
+                Text("Hora")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.headline)
+                    .foregroundStyle(.black)
+                
+                Picker("Selecciona una hora", selection: $selectedHour) {
+                   ForEach(timeSlots, id: \.self) { time in
+                       Text(time, style: .time)
+                           .frame(maxWidth: .infinity, alignment: .leading)
+                           .tag(time)
                         }
                     }
-                    
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd"
-                    dateFormatter.timeZone = TimeZone(identifier: "America/Mexico_City")
-                    let dateString = dateFormatter.string(from: selectedDate)
-                    
-                    print("antes")
-                    print(dateString)
-                    print(invalidDates!)
-                    if (invalidDates!.contains(dateString)){
-                        print("si")
-                        selectedDate = dateRange.first(where: { $0 > selectedDate }) ?? dateRange.first!
-                        
-                        alertMessage = "Ya tienes una cita para esta fecha"
-                        titleAlert = "Aviso"
-                        showAlert = true
-                        
-                    }
-            
-                })
-            
-            Text("Hora")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.headline)
-                .foregroundStyle(.black)
-            
-            Picker("Selecciona una hora", selection: $selectedHour) {
-               ForEach(timeSlots, id: \.self) { time in
-                   Text(time, style: .time)
-                       .frame(maxWidth: .infinity, alignment: .leading)
-                       .tag(time)
-                    }
-                }
-                .pickerStyle(DefaultPickerStyle())
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical,5)
-                .background(Color.gray.opacity(0.3))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-            Spacer()
-
-            Button(action: {createAppointmentRequest()}, label: {
-                Text("Confirmar cita")
-                    .foregroundStyle(.white)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal)
-                    .background(Color.blue)
-                    .bold()
+                    .pickerStyle(DefaultPickerStyle())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical,5)
+                    .background(Color.gray.opacity(0.3))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
-            }).disabled(notAbleToCreate)
-            
-            Spacer()
-        }.navigationTitle(title)
-        .padding()
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text(titleAlert),
-                message: Text(alertMessage),
-                dismissButton: .default(Text("OK"))
-            )
-        }
-        .onAppear(perform: {
-            if (appointmentId != nil){
-                title = "Editar cita"
+                Spacer()
+
+                Button(action: {createAppointmentRequest()}, label: {
+                    Text("Confirmar cita")
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 10)
+                        .padding(.horizontal)
+                        .background(Color.blue)
+                        .bold()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }).disabled(notAbleToCreate)
+                
+                Spacer()
+            }.navigationTitle(title)
+                .navigationBarTitleTextColor(.black)
+            .padding()
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text(titleAlert),
+                    message: Text(alertMessage),
+                    dismissButton: .default(Text("OK"))
+                )
             }
-            appointmentDatesRequest()
-        })
+            .onAppear(perform: {
+                subscribeToKeyboardEvents()
+                if (appointmentId != nil){
+                    title = "Editar cita"
+                }
+                appointmentDatesRequest()
+            })
+            .onDisappear(perform: {
+                unsubscribeFromKeyboardEvents()
+            })
+        }
     }
     
     func createAppointmentRequest(){
@@ -336,6 +344,36 @@ struct AppointmentsDetailView: View {
         }
         
         return nil
+    }
+    
+    func subscribeToKeyboardEvents() {
+            NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
+                if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                    withAnimation {
+                        self.keyboardHeight = keyboardFrame.height - 20
+                    }
+                }
+            }
+            NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
+                withAnimation {
+                    self.keyboardHeight = 0
+                }
+            }
+        }
+
+        func unsubscribeFromKeyboardEvents() {
+            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        }
+}
+
+extension View {
+    @available(iOS 14, *)
+    func navigationBarTitleTextColor(_ color: Color) -> some View {
+        let uiColor = UIColor(color)
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: uiColor ]
+        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: uiColor ]
+        return self
     }
 }
 

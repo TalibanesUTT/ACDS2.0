@@ -43,80 +43,86 @@ struct AppointmentsView: View {
     @State var appoints: [Appointment] = []
     
     var body: some View {
-        VStack{
-            Text("Citas")
-                .font(.largeTitle)
-                .bold()
-                .frame(maxWidth: .infinity, alignment: .leading)
-            ZStack(alignment: .bottomTrailing){
-                ScrollView{
-                    ForEach(appoints){ app in
-                        VStack{
-                            HStack{
-                                Text(app.status)
-                                    .foregroundStyle(.black)
-                                Text("- \(app.time)")
-                                    .foregroundStyle(.black)
-                                Text(app.date)
-                                    .frame(maxWidth: .infinity, alignment: .trailing)
-                                    .foregroundStyle(.black.opacity(0.6))
-                            }
-                            .font(.caption)
-                            .bold()
-                            HStack{
-                                Text(app.reason)
-                                    .font(.subheadline)
-                                    .lineLimit(2)
-                                    .foregroundStyle(.black)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                if app.status == "Pendiente" {
-                                    Menu {
-                                        // NavigationLink(destination: AppointmentsDetailView(
-                                        //   title: "Editar cita",
-                                        // appointmentId: app.id,
-                                        //appointmentHour: app.time,
-                                        //appointmentDate: app.date,
-                                        //reasonError: nil)) {
-                                        //Text("Editar")
-                                        Button("Cancelar") {
-                                            cancelAppointmentRequest(app.id)
+        ZStack{
+            Color("BG").ignoresSafeArea()
+            VStack{
+                Text("Citas")
+                    .font(.largeTitle)
+                    .bold()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(.black)
+                ZStack(alignment: .bottomTrailing){
+                    ScrollView{
+                        ForEach(appoints){ app in
+                            VStack{
+                                HStack{
+                                    Text(app.status)
+                                        .foregroundStyle(.black)
+                                    Text("- \(app.time)")
+                                        .foregroundStyle(.black)
+                                    Text(app.date)
+                                        .frame(maxWidth: .infinity, alignment: .trailing)
+                                        .foregroundStyle(.black.opacity(0.6))
+                                }
+                                .font(.caption)
+                                .bold()
+                                HStack{
+                                    Text(app.reason)
+                                        .font(.subheadline)
+                                        .lineLimit(2)
+                                        .foregroundStyle(.black)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                    if app.status == "Pendiente" {
+                                        Menu {
+                                            // NavigationLink(destination: AppointmentsDetailView(
+                                            //   title: "Editar cita",
+                                            // appointmentId: app.id,
+                                            //appointmentHour: app.time,
+                                            //appointmentDate: app.date,
+                                            //reasonError: nil)) {
+                                            //Text("Editar")
+                                            Button("Cancelar") {
+                                                cancelAppointmentRequest(app.id)
+                                                    
+                                            }.foregroundStyle(.black)
+                                        } label: {
+                                            Image(systemName: "ellipsis")
+                                                .foregroundStyle(.redBtn)
                                         }
-                                    } label: {
-                                        Image(systemName: "ellipsis")
-                                            .foregroundStyle(.redBtn)
+                                    
                                     }
-                                
                                 }
                             }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.gray.opacity(0.1))
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.gray.opacity(0.1))
                     }
-                }
-                NavigationLink(destination: AppointmentsDetailView(), label: {
-                    Image(systemName: "plus")
-                        .font(.largeTitle     )
-                        .foregroundStyle(.redBtn)
-                        .padding()
-                        .background(Color.white)
-                        .clipShape(Circle())
-                        .shadow(color: .gray, radius: 5, x: 0, y: 5)
+                    NavigationLink(destination: AppointmentsDetailView(), label: {
+                        Image(systemName: "plus")
+                            .font(.largeTitle     )
+                            .foregroundStyle(.redBtn)
+                            .padding()
+                            .background(Color.white)
+                            .clipShape(Circle())
+                            .shadow(color: .gray, radius: 5, x: 0, y: 5)
 
-                })
-                .padding()
+                    })
+                    .padding()
+                }
             }
+            .alert(isPresented: $showAlert){
+                Alert(title: Text(titleAlert),
+                message: Text(alertMessage),
+                      dismissButton: .default(Text("Ok").foregroundStyle(.blue)))
+            }
+            .padding()
+            .onAppear(perform: {
+                myAppointmentsRequest()
+            })
+
         }
-        .alert(isPresented: $showAlert){
-            Alert(title: Text(titleAlert),
-            message: Text(alertMessage),
-                  dismissButton: .default(Text("Ok").foregroundStyle(.blue)))
-        }
-        .padding()
-        .onAppear(perform: {
-            myAppointmentsRequest()
-        })
     }
     
     //MARK: - Requests

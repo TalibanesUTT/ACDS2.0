@@ -17,6 +17,7 @@ class NavigationManager: ObservableObject {
 }
 
 struct LoginView: View {
+    @State private var activated: Bool = false
     @State var emailText: String = ""
     @State var emailError: String? = nil
     @State var passwordError: String? = nil
@@ -26,6 +27,21 @@ struct LoginView: View {
     @State private var alertMessage = ""
     @EnvironmentObject var navigationManager: NavigationManager
     @ObservedObject var userData = UserData.shared
+    var watchConnection = WatchConnector()
+    
+    func activateWatch(){
+        if self.watchConnection.wcSession.isReachable{
+            self.activated = true
+            self.watchConnection.wcSession.sendMessage(["message" : userData.token, "id": userData.id], replyHandler: nil) { (error) in
+                print("error \(error.localizedDescription)")
+            }
+        }
+        else {
+            print("not reachable")
+            self.activated = false
+        }
+    }
+    
     
     var body: some View {
         NavigationStack (path: $navigationManager.path){
@@ -176,7 +192,6 @@ struct LoginView: View {
                 )
             }
             .onAppear {
-                WatchConnector.shared.startSession()
                 if (!userData.token.isEmpty){
                     navigateToHome()
                 }
@@ -236,7 +251,6 @@ struct LoginView: View {
                         DispatchQueue.main.async {
                             self.userData.token = JSONResponse["data"] as! String
                             print(self.userData.token)
-                            WatchConnector.shared.sendToken(self.userData.token)
                             getProfile()
                          
                         }
@@ -296,6 +310,8 @@ struct LoginView: View {
                             self.userData.email = JSONResponse["email"] as! String
                             self.userData.phone_number = JSONResponse["phoneNumber"] as! String
                             if (JSONResponse["role"] as! String == "customer"){
+                                
+                                //activateWatch()
                                 navigateToHome()
                             }
                             else{

@@ -46,6 +46,7 @@ struct SecondRegisterView: View {
                     .cornerRadius(10)
                     .padding((passwordError != nil) ? .top : .bottom, (passwordError != nil) ? 0 : 30)
                     .keyboardType(.default)
+                    .foregroundStyle(.black)
                 
                 if let errorMessage = passwordError {
                     Text(errorMessage)
@@ -72,6 +73,7 @@ struct SecondRegisterView: View {
                     .cornerRadius(10)
                     .padding((confirmPasswordError != nil) ? .top : .bottom, (confirmPasswordError != nil) ? 0 : 30)
                     .keyboardType(.default)
+                    .foregroundStyle(.black)
                     
                 
                 if let errorMessage = confirmPasswordError {
@@ -99,6 +101,7 @@ struct SecondRegisterView: View {
                     .cornerRadius(10)
                     .padding((phoneError != nil) ? .top : .bottom, (phoneError != nil) ? 0 : 30)
                     .keyboardType(.numberPad)
+                    .foregroundStyle(.black)
                 
                 if let errorMessage = phoneError {
                     Text(errorMessage)
