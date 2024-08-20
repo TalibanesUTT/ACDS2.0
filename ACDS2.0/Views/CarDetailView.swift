@@ -18,39 +18,43 @@ struct CarDetailView: View {
             ZStack{
                 Color("BG").ignoresSafeArea()
                 VStack{
-                    VStack{
-                        Text("\(car.model["model"]!) - \(car.year)")
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.black)
-                        
-                        Image("\(car.model["brand"]!)")
-                            .resizable().scaledToFit()
-                            .aspectRatio(0.8, contentMode: .fit)
-                    }
-                    .padding(.bottom, 30)
-                    VStack{
-                        Picker("", selection: $selectedView){
-                            ForEach(subViews.allCases, id: \.self){
-                                Text($0.rawValue)
+                    ZStack(alignment:.bottomTrailing){
+                        VStack{
+                            VStack{
+                                Text("\(car.model["model"]!) - \(car.year)")
+                                    .font(.largeTitle)
+                                    .fontWeight(.semibold)
                                     .foregroundStyle(.black)
+                                
+                                Image("\(car.model["brand"]!)")
+                                    .resizable().scaledToFit()
+                                    .aspectRatio(0.8, contentMode: .fit)
                             }
+                            .padding(.bottom, 30)
+                            VStack{
+                                Picker("", selection: $selectedView){
+                                    ForEach(subViews.allCases, id: \.self){
+                                        Text($0.rawValue)
+                                            .foregroundStyle(.black)
+                                    }
+                                }
+                                .preferredColorScheme(.light)
+                                .pickerStyle(SegmentedPickerStyle())
+                                SegmentView(selectedView: selectedView, carServices: carServices, car: car)
+                            }
+                            .padding()
+                            .alert(isPresented: $showAlert) {
+                                Alert(
+                                    title: Text("Error"),
+                                    message: Text(alertMessage),
+                                    dismissButton: .default(Text("OK"))
+                                )
+                            }
+                            .onAppear(perform: {
+                                servicesRequest(car.id)
+                            })
                         }
-                        .preferredColorScheme(.light)
-                        .pickerStyle(SegmentedPickerStyle())
-                        SegmentView(selectedView: selectedView, carServices: carServices, car: car)
                     }
-                    .padding()
-                    .alert(isPresented: $showAlert) {
-                        Alert(
-                            title: Text("Error"),
-                            message: Text(alertMessage),
-                            dismissButton: .default(Text("OK"))
-                        )
-                    }
-                    .onAppear(perform: {
-                        servicesRequest(car.id)
-                    })
                 }
             }
     }
@@ -82,7 +86,7 @@ struct CarDetailView: View {
                                     appointments: dict["appointment"] as? [String:Any],
                                     services: dict["services"] as! [[String:Any]],
                                       detail: dict["detail"] as? [String:Any] ?? [:],
-                                    history: dict["history"] as? [String:Any],
+                                    history: dict["history"] as? [[String:Any]],
                                     actualStatus: dict["actualStatus"] as? String)
                         }
                     }
@@ -290,118 +294,132 @@ struct OrderDetailView: View {
         
         ZStack{
             Color("BG").ignoresSafeArea()
-            VStack{
-            HStack{
-                Text("Fecha de servicio")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(toDateFromString(carDetail.createDate)!)")
-                    .font(.callout)
+            ZStack(alignment: .bottomTrailing){
+                VStack{
+                    HStack{
+                        Text("Fecha de servicio")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(toDateFromString(carDetail.createDate)!)")
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Estatus")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.actualStatus ?? "Sin estatus")")
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Notas iniciales")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.notes)")
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Kilometraje inicial")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.initialMileage) km")
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Servicios")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(formatServicesInList(carDetail.services))")
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Color")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.vehicle["color"]!)")
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Presupuesto")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(formatStringToCurrency(carDetail.detail["budget"] as? String ?? "0")!)").font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Costo total")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(formatStringToCurrency(carDetail.detail["totalCost"] as? String ?? "0")!)")
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Fecha de salida")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(toDateFromString(carDetail.detail["departureDate"] as? String ?? "Fecha no disponible") ?? "Fecha no disponible")")
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Días en reparacion")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.detail["repairDays"] as? String ?? "No disponibles")")
+                        
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Kilometraje final")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.detail["finalMileage"] as? String ?? "No disponible") km")
+                            .font(.callout)
+                    }
+                    Divider()
+                    HStack{
+                        Text("Observaciones")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.detail["observations"] as? String ?? "Sin observaciones")")
+                            .font(.callout)
+                    }
+                    
+                    Spacer()
+                    
+                }
+                
+                NavigationLink(destination: OrderTimeLineView(id: carDetail.id), label: {
+                    Text("Estado actual")
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+                        .foregroundStyle(.white)
+                        .bold()
+                        .background(.redBtn)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .shadow(color: .gray, radius: 5, x: 0, y: 5)
+                })
+                .padding()
             }
-            Divider()
-            HStack{
-                Text("Estatus")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.actualStatus ?? "Sin estatus")")
-                    .font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Notas iniciales")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.notes)")
-                    .font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Kilometraje inicial")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.initialMileage) km")
-                    .font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Servicios")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(formatServicesInList(carDetail.services))")
-                    .font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Color")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.vehicle["color"]!)")
-                    .font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Presupuesto")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(formatStringToCurrency(carDetail.detail["budget"] as? String ?? "0")!)").font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Costo total")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(formatStringToCurrency(carDetail.detail["totalCost"] as? String ?? "0")!)")
-                    .font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Fecha de salida")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(toDateFromString(carDetail.detail["departureDate"] as? String ?? "Fecha no disponible") ?? "Fecha no disponible")")
-                    .font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Días en reparacion")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.detail["repairDays"] as? String ?? "No disponibles")")
-
-                    .font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Kilometraje final")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.detail["finalMileage"] as? String ?? "No disponible") km")
-                    .font(.callout)
-            }
-            Divider()
-            HStack{
-                Text("Observaciones")
-                    .bold()
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("\(carDetail.detail["observations"] as? String ?? "Sin observaciones")")
-                    .font(.callout)
-            }
-            
-            Spacer()
-            
-        }
             .padding()
             .foregroundStyle(.black)
         }

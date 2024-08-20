@@ -197,7 +197,7 @@ struct OrdersView: View {
                                     appointments: dict["appointment"] as? [String:Any],
                                     services: dict["services"] as! [[String:Any]],
                                       detail: dict["detail"] as? [String:Any] ?? [:],
-                                    history: dict["history"] as? [String:Any],
+                                    history: dict["history"] as? [[String:Any]],
                                     actualStatus: dict["actualStatus"] as? String)
                         }
                     }
@@ -232,7 +232,7 @@ struct OrdersView: View {
     }
     
     func customersRequest(){
-        let url = URL(string: "\(userData.prodUrl)/customers")!
+        let url = URL(string: "\(userData.prodUrl)/users")!
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "GET"
         request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
@@ -310,7 +310,7 @@ struct OrdersView: View {
                                     appointments: dict["appointment"] as? [String:Any],
                                     services: dict["services"] as! [[String:Any]],
                                       detail: dict["detail"] as? [String:Any] ?? [:],
-                                    history: dict["history"] as? [String:Any],
+                                    history: dict["history"] as? [[String:Any]],
                                     actualStatus: dict["actualStatus"] as? String)
                         }
                     }
@@ -345,6 +345,8 @@ struct OrdersView: View {
 
 
 struct ServiceOrderDetailView: View {
+    var validStatus = ["Recibido", "En revisión", "Emitido", "Aprobado", "En proceso", "En chequeo", "Completado", "Listo para recoger", "Entregado", "Finalizado", "En espera", "Cancelado"]
+    
     var carDetail: CarDetail
     @ObservedObject var userData = UserData.shared
     @State var titleAlert: String = ""
@@ -358,168 +360,286 @@ struct ServiceOrderDetailView: View {
     var body: some View {
         ZStack{
             Color("BG").ignoresSafeArea()
-            VStack{
-                HStack{
-                    Text("Fecha de servicio")
-                        .bold()
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(toDateFromString(carDetail.createDate)!)")
-                        .font(.footnote)
-                }
-                .foregroundStyle(.black)
-                Divider()
-                HStack{
-                    Text("Estatus")
-                        .bold()
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(carDetail.actualStatus ?? "Sin estatus")")
-                        .font(.footnote)
-                }
-                .foregroundStyle(.black)
-                Divider()
-                HStack{
-                    Text("Notas iniciales")
-                        .bold()
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(carDetail.notes)")
-                        .font(.footnote)
-                }
-                .foregroundStyle(.black)
-                Divider()
-                HStack{
-                    Text("Kilometraje inicial")
-                        .bold()
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(carDetail.initialMileage) km")
-                        .font(.footnote)
-                }
-                .foregroundStyle(.black)
-                Divider()
-                HStack{
-                    Text("Servicios")
-                        .bold()
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(formatServicesInList(carDetail.services))")
-                        .font(.footnote)
-                }
-                .foregroundStyle(.black)
-                Divider()
-                HStack{
-                    Text("Presupuesto")
-                        .bold()
-                        .font(.headline)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text(formatStringToCurrency(carDetail.detail["budget"] as? String ?? "0") ?? "Sin detalle")
-                        .font(.footnote)
-                }
-                .foregroundStyle(.black)
-                Spacer()
-                VStack{
-                    Text("QR de la orden")
-                        .font(.title)
-                        .bold()
-                        .padding(.vertical, 8)
-                        .frame(maxWidth: .infinity)
-                        .background(.redBtn)
-                        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 10)))
-                        .foregroundStyle(.white)
-                    QRCodeGenerate(data: ["id": carDetail.id, "token" : userData.token])
-                        .padding(.bottom, 60)
-                    
-                    Button(action: {
-                        alertType = 1
-                        titleAlert = "Aviso"
-                        alertMessage = "Estás a punto de cancelar esta orden de servicio. Por favor, introduce comentarios explicando las razones."
-                        showTextAlert = true
-                    },
-                        label: {
-                        Text("Cancelar")
-                            .padding(.vertical, 15)
-                            .padding(.horizontal, 8)
-                            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
-                            .foregroundStyle(.white)
-                            .background(Color.redBtn)
-                            .bold()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    })
-                    
+            ScrollView{
+                
                     HStack{
-                        Button(action: {
-                            alertType = 2
-                            titleAlert = "Aviso"
-                            alertMessage = "Estás a punto de poner en espera esta orden de servicio. Esto impedirá que la orden pueda continuar con su flujo. Por favor, introduce comentarios explicando las razones."
-                            showTextAlert = true
-                        },
-                            label: {
-                            Text("En espera")
-                                .padding(.vertical, 15)
-                                .padding(.horizontal, 8)
-                                .frame(maxWidth: .infinity)
-                                .foregroundStyle(.white)
-                                .background(Color.yellow)
-                                .bold()
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        })
-                    
-                        Button(action: {
-                            alertType = 3
-                            titleAlert = "Aviso"
-                            isRevert = true
-                            alertMessage = "Estás a punto de revertir el estatus actual de la orden de servicio. Eso regresará la orden de servicio a su penúltimo estatus activo. ¿Deseas continuar?"
-                            showAlert = true
-                        }, label: {
-                            Text("Revertir")
-                                .padding(.vertical, 15)
-                                .padding(.horizontal, 8)
-                                .frame(maxWidth: .infinity)
-                                .foregroundStyle(.white)
-                                .background(Color.blue)
-                                .bold()
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        })
+                        Text("Fecha de servicio")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(toDateFromString(carDetail.createDate)!)")
+                            .font(.footnote)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                }
-            }
-            .padding()
-            .alert("Aviso", isPresented: $showTextAlert, actions: {
-                TextField("Comentarios", text: $comments)
-                Button("Cancelar", role: .cancel){comments = ""}
-                Button("Confirmar"){
-                    if (alertType == 1){
-                        updateStatusRequest(false, true, false)
+                    .foregroundStyle(.black)
+                    Divider()
+                    HStack{
+                        Text("Estatus")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.actualStatus ?? "Sin estatus")")
+                            .font(.footnote)
+                    }
+                    .foregroundStyle(.black)
+                    Divider()
+                    HStack{
+                        Text("Notas iniciales")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.notes)")
+                            .font(.footnote)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    .foregroundStyle(.black)
+                    Divider()
+                    HStack{
+                        Text("Kilometraje inicial")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(carDetail.initialMileage) km")
+                            .font(.footnote)
+                    }
+                    .foregroundStyle(.black)
+                    Divider()
+                    HStack{
+                        Text("Servicios")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(formatServicesInList(carDetail.services))")
+                            .font(.footnote)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    .foregroundStyle(.black)
+                    Divider()
+                    HStack{
+                        Text("Presupuesto")
+                            .bold()
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(formatStringToCurrency(carDetail.detail["budget"] as? String ?? "0") ?? "Sin detalle")
+                            .font(.footnote)
+                    }
+                    .foregroundStyle(.black)
+                    Spacer()
+                    VStack{
+                        Text("QR de la orden")
+                            .font(.title)
+                            .bold()
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(.redBtn)
+                            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 10)))
+                            .foregroundStyle(.white)
+                        QRCodeGenerate(data: ["id": carDetail.id, "token" : userData.token])
+                            .padding(.bottom, 60)
                         
+                        let range = validStatus[3...11]
+                        let secondRange = validStatus[7...11]
+                        
+                        if (carDetail.actualStatus == validStatus[11]){
+                            Button(action: {
+                                alertType = 3
+                                titleAlert = "Aviso"
+                                isRevert = true
+                                alertMessage = "Estás a punto de revertir el estatus actual de la orden de servicio. Eso regresará la orden de servicio a su penúltimo estatus activo. ¿Deseas continuar?"
+                                showAlert = true
+                            }, label: {
+                                Text("Revertir")
+                                    .padding(.vertical, 15)
+                                    .padding(.horizontal, 8)
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundStyle(.white)
+                                    .background(Color.blue)
+                                    .bold()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                        }
+                        
+                        else if (carDetail.actualStatus == validStatus[10]){
+                            Button(action: {
+                                alertType = 3
+                                titleAlert = "Aviso"
+                                isRevert = true
+                                alertMessage = "Estás a punto de revertir el estatus actual de la orden de servicio. Eso regresará la orden de servicio a su penúltimo estatus activo. ¿Deseas continuar?"
+                                showAlert = true
+                            }, label: {
+                                Text("Revertir")
+                                    .padding(.vertical, 15)
+                                    .padding(.horizontal, 8)
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundStyle(.white)
+                                    .background(Color.blue)
+                                    .bold()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                            
+                            Button(action: {
+                                alertType = 1
+                                titleAlert = "Aviso"
+                                alertMessage = "Estás a punto de cancelar esta orden de servicio. Por favor, introduce comentarios explicando las razones."
+                                showTextAlert = true
+                            },
+                                label: {
+                                Text("Cancelar")
+                                    .padding(.vertical, 15)
+                                    .padding(.horizontal, 8)
+                                    .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+                                    .foregroundStyle(.white)
+                                    .background(Color.redBtn)
+                                    .bold()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                            
+                            
+                        }
+                        
+                        else if (carDetail.actualStatus == validStatus[0]){
+                            Button(action: {
+                                alertType = 1
+                                titleAlert = "Aviso"
+                                alertMessage = "Estás a punto de cancelar esta orden de servicio. Por favor, introduce comentarios explicando las razones."
+                                showTextAlert = true
+                            },
+                                label: {
+                                Text("Cancelar")
+                                    .padding(.vertical, 15)
+                                    .padding(.horizontal, 8)
+                                    .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+                                    .foregroundStyle(.white)
+                                    .background(Color.redBtn)
+                                    .bold()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                            
+                            Button(action: {
+                                alertType = 2
+                                titleAlert = "Aviso"
+                                alertMessage = "Estás a punto de poner en espera esta orden de servicio. Esto impedirá que la orden pueda continuar con su flujo. Por favor, introduce comentarios explicando las razones."
+                                showTextAlert = true
+                            },
+                                label: {
+                                Text("En espera")
+                                    .padding(.vertical, 15)
+                                    .padding(.horizontal, 8)
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundStyle(.white)
+                                    .background(Color.yellow)
+                                    .bold()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                        }
+                        else if (secondRange.contains(carDetail.actualStatus!)){
+                            Button(action: {
+                                alertType = 3
+                                titleAlert = "Aviso"
+                                isRevert = true
+                                alertMessage = "Estás a punto de revertir el estatus actual de la orden de servicio. Eso regresará la orden de servicio a su penúltimo estatus activo. ¿Deseas continuar?"
+                                showAlert = true
+                            }, label: {
+                                Text("Revertir")
+                                    .padding(.vertical, 15)
+                                    .padding(.horizontal, 8)
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundStyle(.white)
+                                    .background(Color.blue)
+                                    .bold()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                            
+                            Button(action: {
+                                alertType = 1
+                                titleAlert = "Aviso"
+                                alertMessage = "Estás a punto de cancelar esta orden de servicio. Por favor, introduce comentarios explicando las razones."
+                                showTextAlert = true
+                            },
+                                   label: {
+                                Text("Cancelar")
+                                    .padding(.vertical, 15)
+                                    .padding(.horizontal, 8)
+                                    .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+                                    .foregroundStyle(.white)
+                                    .background(Color.redBtn)
+                                    .bold()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                        }
+                        else if (range.contains(carDetail.actualStatus!)){
+                            Button(action: {
+                                alertType = 3
+                                titleAlert = "Aviso"
+                                isRevert = true
+                                alertMessage = "Estás a punto de revertir el estatus actual de la orden de servicio. Eso regresará la orden de servicio a su penúltimo estatus activo. ¿Deseas continuar?"
+                                showAlert = true
+                            }, label: {
+                                Text("Revertir")
+                                    .padding(.vertical, 15)
+                                    .padding(.horizontal, 8)
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundStyle(.white)
+                                    .background(Color.blue)
+                                    .bold()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                            
+                            Button(action: {
+                                alertType = 2
+                                titleAlert = "Aviso"
+                                alertMessage = "Estás a punto de poner en espera esta orden de servicio. Esto impedirá que la orden pueda continuar con su flujo. Por favor, introduce comentarios explicando las razones."
+                                showTextAlert = true
+                            },
+                                label: {
+                                Text("En espera")
+                                    .padding(.vertical, 15)
+                                    .padding(.horizontal, 8)
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundStyle(.white)
+                                    .background(Color.yellow)
+                                    .bold()
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                        }
                     }
-                    if (alertType == 3) {
-                        updateStatusRequest(true, false, false)
-                    }
-                    
-                    if (alertType == 2) {
-                        updateStatusRequest(false, false, true)
-                    }
-                    comments = ""
                 }
-            }, message: {
-                Text(alertMessage)
-            })
-            .alert(isPresented: $showAlert){
-                if (isRevert){
-                    Alert(title: Text(titleAlert), message: Text(alertMessage), primaryButton: .cancel(), secondaryButton: .default(Text("Confirmar"), action: {
-                        updateStatusRequest(true, false, false)
-                        isRevert = false
-                    }))
-                } else {
-                    Alert(
-                        title: Text(titleAlert),
-                        message: Text(alertMessage),
-                        dismissButton: .default(Text("OK"))
-                    )
+                .padding()
+                .alert("Aviso", isPresented: $showTextAlert, actions: {
+                    TextField("Comentarios", text: $comments)
+                    Button("Cancelar", role: .cancel){comments = ""}
+                    Button("Confirmar"){
+                        if (alertType == 1){
+                            updateStatusRequest(false, true, false)
+                            
+                        }
+                        if (alertType == 3) {
+                            updateStatusRequest(true, false, false)
+                        }
+                        
+                        if (alertType == 2) {
+                            updateStatusRequest(false, false, true)
+                        }
+                        comments = ""
+                    }
+                }, message: {
+                    Text(alertMessage)
+                })
+                .alert(isPresented: $showAlert){
+                    if (isRevert){
+                        Alert(title: Text(titleAlert), message: Text(alertMessage), primaryButton: .cancel(), secondaryButton: .default(Text("Confirmar"), action: {
+                            updateStatusRequest(true, false, false)
+                            isRevert = false
+                        }))
+                    } else {
+                        Alert(
+                            title: Text(titleAlert),
+                            message: Text(alertMessage),
+                            dismissButton: .default(Text("OK"))
+                        )
+                    }
                 }
-            }
         }
     }
 
@@ -648,6 +768,6 @@ struct ServiceOrderDetailView: View {
 }
 
 #Preview {
-    OrdersView()
-    //ServiceOrderDetailView(carDetail: CarDetail(id: "1", fileNumber: "2", initialMileage: 10000, notes: "Sin detalles extras encontrados", createDate: "2024-08-09T06:41:03.000Z", vehicle: ["id": "2", "serialNumber": "09120912938","year": 2023, "color": "Negro", "plates": "FPS-123-503", "owner": "Luis Zapata", "model": ["id": "4", "model": "Lobo", "brand": "Ford"]], appointments: nil, services: [["id": "1", "name": "Afinación"], ["id": "2", "name": "Aceite"]], detail: ["budget": "25000", "totalCost": "50000", "departureDate" : "2024-08-09T06:41:03.000Z", "repairDays": 5, "finalMileage": 12000, "observations": "Todo correcto"], history: nil, actualStatus: "Pendiente"))
+    //OrdersView()
+    ServiceOrderDetailView(carDetail: CarDetail(id: "1", fileNumber: "2", initialMileage: 10000, notes: "Sin detalles extras encontrados esto debe tener bastante texto para ver como se comporta", createDate: "2024-08-09T06:41:03.000Z", vehicle: ["id": "2", "serialNumber": "09120912938","year": 2023, "color": "Negro", "plates": "FPS-123-503", "owner": "Luis Zapata", "model": ["id": "4", "model": "Lobo", "brand": "Ford"]], appointments: nil, services: [["id": "1", "name": "Afinación"], ["id": "2", "name": "Aceite"]], detail: ["budget": "25000", "totalCost": "50000", "departureDate" : "2024-08-09T06:41:03.000Z", "repairDays": 5, "finalMileage": 12000, "observations": "Todo correcto"], history: nil, actualStatus: "Pendiente"))
 }

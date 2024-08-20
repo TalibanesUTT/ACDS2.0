@@ -37,11 +37,23 @@ struct ProfileView: View {
     @State var confirmNewPasswordError: String? = nil
     @EnvironmentObject var navigationManager: NavigationManager
     @ObservedObject var userData = UserData.shared
+    @State var showLogout: Bool = false
     
     var body: some View {
         ZStack{
             Color("BG").ignoresSafeArea()
             VStack{
+                HStack{
+                    Button(action: {showLogout = true}) {
+                        Image(systemName:"rectangle.portrait.and.arrow.right")
+                            .padding(.all,8)
+                            .foregroundStyle(.white)
+                            .background(Color.redBtn)
+                            .clipShape(Circle())
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    
+                }
                 Image("PFP")
                     .resizable()
                     .scaledToFit()
@@ -348,6 +360,15 @@ struct ProfileView: View {
                     )
                 }
             }
+            .alert(isPresented: $showLogout) {
+                Alert(title: Text("Advertencia"), 
+                      message: Text("Estás a punto de cerrar sesión, ¿Estás seguro?"),
+                      primaryButton: .default(Text("Cancelar")),
+                      secondaryButton: .destructive(Text("Confirmar"), action: {
+                    logoutRequest()
+                }))
+
+            }
         }
     }
     
@@ -534,7 +555,10 @@ struct ProfileView: View {
                 
             if let httpResponse = response as? HTTPURLResponse {
                 if (httpResponse.statusCode == 200) {
-                   
+                    DispatchQueue.main.async {
+                        userData.resetData()
+                        navigationManager.resetToRoot()
+                    }
                 }
                 else {
                     do {

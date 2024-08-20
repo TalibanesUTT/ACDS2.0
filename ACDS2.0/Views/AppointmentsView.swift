@@ -75,13 +75,6 @@ struct AppointmentsView: View {
                                     
                                     if app.status == "Pendiente" {
                                         Menu {
-                                            // NavigationLink(destination: AppointmentsDetailView(
-                                            //   title: "Editar cita",
-                                            // appointmentId: app.id,
-                                            //appointmentHour: app.time,
-                                            //appointmentDate: app.date,
-                                            //reasonError: nil)) {
-                                            //Text("Editar")
                                             Button("Cancelar") {
                                                 cancelAppointmentRequest(app.id)
                                                     
@@ -195,9 +188,6 @@ struct AppointmentsView: View {
                             alertMessage = message
                             titleAlert = "Aviso"
                             showAlert = true
-                            appoints.removeAll { appointment in
-                                appointment.id == appointementId
-                            }
                         }
                     }
                     catch{

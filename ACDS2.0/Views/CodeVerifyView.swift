@@ -18,6 +18,7 @@ struct CodeVerifyView: View {
     @State var disableResend: Bool = true
     @State var countDown: TimeInterval = 10
     @State var titleAlert: String = "Error"
+    @State var fromAdmin: Bool = false
 
     
     var body: some View {
@@ -66,19 +67,21 @@ struct CodeVerifyView: View {
                 })
                 
                 HStack {
-                    VStack{
-                        Text("")
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                        
-                        Button(action: { navigateToRegister() }, label: {
-                            Text("¿Tus datos son incorrectos?")
-                                .font(.footnote)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        })
-                        .foregroundStyle(.black)
+                    
+                    if (!fromAdmin){
+                        VStack{
+                            Text("")
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                            
+                            Button(action: { navigateToRegister() }, label: {
+                                Text("¿Tus datos son incorrectos?")
+                                    .font(.footnote)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            })
+                            .foregroundStyle(.black)
+                        }
                     }
-                    
-                    
+                   
                     VStack {
                         Text(formattedTime())
                             .frame(maxWidth: .infinity, alignment: .trailing)
@@ -123,6 +126,13 @@ struct CodeVerifyView: View {
         navigationManager.resetToRoot()
     }
     
+    func navigateToHome(){
+        navigationManager.path.append("Home")
+    }
+    
+    func navigateToMechanic(){
+        navigationManager.path.append("Mechanic")
+    }
     //MARK: - Requests
     
     func verifyCodeRequest(){
@@ -138,11 +148,35 @@ struct CodeVerifyView: View {
             
             if let httpResponse = response as? HTTPURLResponse {
                 if (httpResponse.statusCode == 200) {
-                    DispatchQueue.main.async {
-                        navigateToLogin()
+                    do
+                    {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        
+                        let token = JSONResponse["data"] as? String
+                        if (!((token?.isEmpty) == nil)){
+                            DispatchQueue.main.async {
+                                userData.token = token!
+                                getProfile()
+                            }
+                        }
+                        else{
+                            DispatchQueue.main.async {
+                                navigateToLogin()
+                            }
+                        }
                     }
+                    catch{
+                        print(error)
+                        DispatchQueue.main.async {
+                            titleAlert = "Error"
+                            alertMessage = "No se pudo verificar "
+                            showAlert = true
+                        }
+                    }
+                    
                 }
                 else {
+                    print("error")
                     DispatchQueue.main.async {
                         titleAlert = "Error"
                         alertMessage = "No se pudo verificar "
@@ -190,6 +224,69 @@ struct CodeVerifyView: View {
                         countDown = 10
                         disableResend = true
                         alertMessage = "No se pudo reenviar el código"
+                        showAlert = true
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    func getProfile() {
+        let url = URL(string: "\(userData.prodUrl)/profile")!
+        var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
+        request.httpMethod = "GET"
+        request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
+              
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error en el request: \(error)")
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                if (httpResponse.statusCode == 200) {
+                    do {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        let id = JSONResponse["id"] as! String
+                        DispatchQueue.main.async {
+                            
+                            if let numberValue = Int(id) {
+                                self.userData.id = numberValue
+                            } else {
+                                print("No se pudo convertir la cadena a un número")
+                            }
+                            
+                            self.userData.name = JSONResponse["name"] as! String
+                            self.userData.lastName = JSONResponse["lastName"] as! String
+                            self.userData.email = JSONResponse["email"] as! String
+                            self.userData.phone_number = JSONResponse["phoneNumber"] as! String
+                            if (JSONResponse["role"] as! String == "customer"){
+                                navigateToHome()
+                            }
+                            else{
+                                navigateToMechanic()
+                            }
+                        }
+                    }
+                    catch{
+                        alertMessage = "Algo salió mal"
+                        showAlert = true
+                    }
+                }
+                else {
+                    do {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        print(JSONResponse)
+                        let error = JSONResponse["error"] as! [String:Any]
+                        let message = error["message"] as! String
+                        DispatchQueue.main.async {
+                            alertMessage = message
+                            showAlert = true
+                        }
+                    }
+                    catch{
+                        alertMessage = "Algo salió mal"
                         showAlert = true
                     }
                 }

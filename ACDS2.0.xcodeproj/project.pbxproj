@@ -7,13 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		27BD8A55F95E6CC4C8538A95 /* Pods_ACDS2_0.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B258192F6AD29CE3765F4C11 /* Pods_ACDS2_0.framework */; };
 		CC44B6762C589AA600916C27 /* ACDS2_0App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC44B6752C589AA600916C27 /* ACDS2_0App.swift */; };
 		CC44B6782C589AA600916C27 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC44B6772C589AA600916C27 /* LoginView.swift */; };
 		CC44B67A2C589AA800916C27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC44B6792C589AA800916C27 /* Assets.xcassets */; };
 		CC44B67D2C589AA800916C27 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC44B67C2C589AA800916C27 /* Preview Assets.xcassets */; };
 		CC44B6842C589C9000916C27 /* logo.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CC44B6832C589C9000916C27 /* logo.jpg */; };
-		CC4F5FCE2C6A9BC200001596 /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC4F5FCD2C6A9BC100001596 /* WatchKit.framework */; };
-		CC4F5FD02C6AA12200001596 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC4F5FCF2C6AA12200001596 /* WatchConnectivity.framework */; };
 		CC4F5FD22C6AAE7700001596 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC4F5FD12C6AAE7700001596 /* UserData.swift */; };
 		CC60DA0C2C5A9F5F0014F5F3 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA0B2C5A9F5F0014F5F3 /* UserData.swift */; };
 		CC60DA0F2C5AA70A0014F5F3 /* FirstRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA0E2C5AA70A0014F5F3 /* FirstRegisterView.swift */; };
@@ -23,13 +22,15 @@
 		CC60DA172C5AA96C0014F5F3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA162C5AA96C0014F5F3 /* HomeView.swift */; };
 		CC60DA192C5AA9C90014F5F3 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA182C5AA9C90014F5F3 /* MainView.swift */; };
 		CC60DA1B2C5B8E100014F5F3 /* PassRecoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60DA1A2C5B8E100014F5F3 /* PassRecoverView.swift */; };
+		CCA3413C2C6F27D20097504F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCA3413B2C6F26CA0097504F /* GoogleService-Info.plist */; };
+		CCA3413F2C702CA90097504F /* WebSocketService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA3413E2C702CA90097504F /* WebSocketService.swift */; };
+		CCA341422C72A5650097504F /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = CCA341412C72A5650097504F /* SocketIO */; };
+		CCA5E63E2C6EC5320073E8AF /* OrderTimeLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA5E63D2C6EC5320073E8AF /* OrderTimeLineView.swift */; };
 		CCB19A062C6A08E80094A775 /* ACdSWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB19A052C6A08E80094A775 /* ACdSWatchApp.swift */; };
 		CCB19A082C6A08E80094A775 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB19A072C6A08E80094A775 /* ContentView.swift */; };
 		CCB19A0A2C6A08EB0094A775 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCB19A092C6A08EB0094A775 /* Assets.xcassets */; };
 		CCB19A0D2C6A08EB0094A775 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCB19A0C2C6A08EB0094A775 /* Preview Assets.xcassets */; };
-		CCB19A102C6A08EB0094A775 /* ACdSWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = CCB19A032C6A08E80094A775 /* ACdSWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CCB19A162C6A09190094A775 /* WatchConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB19A152C6A09190094A775 /* WatchConnector.swift */; };
-		CCB19A192C6A095D0094A775 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCB19A182C6A095D0094A775 /* WatchConnectivity.framework */; };
 		CCB19A1B2C6A0A2A0094A775 /* WatchToiOSConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB19A1A2C6A0A2A0094A775 /* WatchToiOSConnector.swift */; };
 		CCF2F7DC2C65EAF6006F3333 /* MechanicHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7DB2C65EAF6006F3333 /* MechanicHome.swift */; };
 		CCF2F7DE2C65EBB0006F3333 /* OrdersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF2F7DD2C65EBB0006F3333 /* OrdersView.swift */; };
@@ -57,7 +58,6 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				CCB19A102C6A08EB0094A775 /* ACdSWatch Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -65,7 +65,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		CC44B6722C589AA600916C27 /* ACDS2.0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ACDS2.0.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B58181BB05F99F4C34548C7 /* Pods-ACDS2.0.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ACDS2.0.release.xcconfig"; path = "Target Support Files/Pods-ACDS2.0/Pods-ACDS2.0.release.xcconfig"; sourceTree = "<group>"; };
+		7000DDAEA736863203184A80 /* Pods-ACDS2.0.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ACDS2.0.debug.xcconfig"; path = "Target Support Files/Pods-ACDS2.0/Pods-ACDS2.0.debug.xcconfig"; sourceTree = "<group>"; };
+		B258192F6AD29CE3765F4C11 /* Pods_ACDS2_0.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ACDS2_0.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC44B6752C589AA600916C27 /* ACDS2_0App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACDS2_0App.swift; sourceTree = "<group>"; };
 		CC44B6772C589AA600916C27 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		CC44B6792C589AA800916C27 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -82,7 +84,14 @@
 		CC60DA162C5AA96C0014F5F3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		CC60DA182C5AA9C90014F5F3 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		CC60DA1A2C5B8E100014F5F3 /* PassRecoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassRecoverView.swift; sourceTree = "<group>"; };
-		CCB19A032C6A08E80094A775 /* ACdSWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ACdSWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCA341372C6ED8780097504F /* ACDS2.0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ACDS2.0.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCA341382C6ED8780097504F /* ACdSWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ACdSWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCA341392C6F1B580097504F /* ACDS2.0.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ACDS2.0.entitlements; sourceTree = "<group>"; };
+		CCA3413A2C6F26A80097504F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CCA3413B2C6F26CA0097504F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CCA3413E2C702CA90097504F /* WebSocketService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketService.swift; sourceTree = "<group>"; };
+		CCA5E63D2C6EC5320073E8AF /* OrderTimeLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderTimeLineView.swift; sourceTree = "<group>"; };
+		CCA5E6472C6ED25D0073E8AF /* ACDS2-0-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ACDS2-0-Info.plist"; sourceTree = "<group>"; };
 		CCB19A052C6A08E80094A775 /* ACdSWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACdSWatchApp.swift; sourceTree = "<group>"; };
 		CCB19A072C6A08E80094A775 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CCB19A092C6A08EB0094A775 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -101,20 +110,19 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CC44B66F2C589AA600916C27 /* Frameworks */ = {
+		0766222FA4AF54E37D98F8F5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC4F5FD02C6AA12200001596 /* WatchConnectivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CCB19A002C6A08E80094A775 /* Frameworks */ = {
+		1EA3A14BA6389020BFB0A530 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCB19A192C6A095D0094A775 /* WatchConnectivity.framework in Frameworks */,
-				CC4F5FCE2C6A9BC200001596 /* WatchKit.framework in Frameworks */,
+				27BD8A55F95E6CC4C8538A95 /* Pods_ACDS2_0.framework in Frameworks */,
+				CCA341422C72A5650097504F /* SocketIO in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,25 +132,22 @@
 		CC44B6692C589AA600916C27 = {
 			isa = PBXGroup;
 			children = (
+				CCA5E6472C6ED25D0073E8AF /* ACDS2-0-Info.plist */,
+				CCA3413A2C6F26A80097504F /* GoogleService-Info.plist */,
 				CC44B6742C589AA600916C27 /* ACDS2.0 */,
 				CCB19A042C6A08E80094A775 /* ACdSWatch Watch App */,
-				CC44B6732C589AA600916C27 /* Products */,
 				CCB19A172C6A095C0094A775 /* Frameworks */,
+				FE02608C290C8F7EB8D2E9B5 /* Pods */,
+				CCA341372C6ED8780097504F /* ACDS2.0.app */,
+				CCA341382C6ED8780097504F /* ACdSWatch Watch App.app */,
 			);
-			sourceTree = "<group>";
-		};
-		CC44B6732C589AA600916C27 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CC44B6722C589AA600916C27 /* ACDS2.0.app */,
-				CCB19A032C6A08E80094A775 /* ACdSWatch Watch App.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CC44B6742C589AA600916C27 /* ACDS2.0 */ = {
 			isa = PBXGroup;
 			children = (
+				CCA3413B2C6F26CA0097504F /* GoogleService-Info.plist */,
+				CCA341392C6F1B580097504F /* ACDS2.0.entitlements */,
 				CCF2F7E02C6800A0006F3333 /* Helpers */,
 				CC44B6832C589C9000916C27 /* logo.jpg */,
 				CC60DA0D2C5AA6980014F5F3 /* Views */,
@@ -188,6 +193,7 @@
 				CCF2F7DD2C65EBB0006F3333 /* OrdersView.swift */,
 				CCF2F7E32C6814D9006F3333 /* AppointmentsView.swift */,
 				CCF2F7E52C683148006F3333 /* AppointmentsDetailView.swift */,
+				CCA5E63D2C6EC5320073E8AF /* OrderTimeLineView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -220,6 +226,7 @@
 				CC4F5FCF2C6AA12200001596 /* WatchConnectivity.framework */,
 				CC4F5FCD2C6A9BC100001596 /* WatchKit.framework */,
 				CCB19A182C6A095D0094A775 /* WatchConnectivity.framework */,
+				B258192F6AD29CE3765F4C11 /* Pods_ACDS2_0.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -228,8 +235,18 @@
 			isa = PBXGroup;
 			children = (
 				CCF2F7E12C6800E1006F3333 /* QRCodeGenerate.swift */,
+				CCA3413E2C702CA90097504F /* WebSocketService.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		FE02608C290C8F7EB8D2E9B5 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7000DDAEA736863203184A80 /* Pods-ACDS2.0.debug.xcconfig */,
+				6B58181BB05F99F4C34548C7 /* Pods-ACDS2.0.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -239,10 +256,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC44B6802C589AA800916C27 /* Build configuration list for PBXNativeTarget "ACDS2.0" */;
 			buildPhases = (
+				D1C41FD3AFB0BF6DEB6F6F91 /* [CP] Check Pods Manifest.lock */,
 				CC44B66E2C589AA600916C27 /* Sources */,
-				CC44B66F2C589AA600916C27 /* Frameworks */,
 				CC44B6702C589AA600916C27 /* Resources */,
 				CCB19A112C6A08EB0094A775 /* Embed Watch Content */,
+				1EA3A14BA6389020BFB0A530 /* Frameworks */,
+				67E0729CEF4037A920191DF1 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -250,8 +269,11 @@
 				CCB19A0F2C6A08EB0094A775 /* PBXTargetDependency */,
 			);
 			name = ACDS2.0;
+			packageProductDependencies = (
+				CCA341412C72A5650097504F /* SocketIO */,
+			);
 			productName = ACDS2.0;
-			productReference = CC44B6722C589AA600916C27 /* ACDS2.0.app */;
+			productReference = CCA341372C6ED8780097504F /* ACDS2.0.app */;
 			productType = "com.apple.product-type.application";
 		};
 		CCB19A022C6A08E80094A775 /* ACdSWatch Watch App */ = {
@@ -259,8 +281,8 @@
 			buildConfigurationList = CCB19A142C6A08EB0094A775 /* Build configuration list for PBXNativeTarget "ACdSWatch Watch App" */;
 			buildPhases = (
 				CCB199FF2C6A08E80094A775 /* Sources */,
-				CCB19A002C6A08E80094A775 /* Frameworks */,
 				CCB19A012C6A08E80094A775 /* Resources */,
+				0766222FA4AF54E37D98F8F5 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -268,7 +290,7 @@
 			);
 			name = "ACdSWatch Watch App";
 			productName = "ACdSWatch Watch App";
-			productReference = CCB19A032C6A08E80094A775 /* ACdSWatch Watch App.app */;
+			productReference = CCA341382C6ED8780097504F /* ACdSWatch Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -298,7 +320,10 @@
 				Base,
 			);
 			mainGroup = CC44B6692C589AA600916C27;
-			productRefGroup = CC44B6732C589AA600916C27 /* Products */;
+			packageReferences = (
+				CCA341402C72A5650097504F /* XCRemoteSwiftPackageReference "socket" */,
+			);
+			productRefGroup = CC44B6692C589AA600916C27;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -314,6 +339,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC44B67D2C589AA800916C27 /* Preview Assets.xcassets in Resources */,
+				CCA3413C2C6F27D20097504F /* GoogleService-Info.plist in Resources */,
 				CC44B6842C589C9000916C27 /* logo.jpg in Resources */,
 				CC44B67A2C589AA800916C27 /* Assets.xcassets in Resources */,
 			);
@@ -330,6 +356,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		67E0729CEF4037A920191DF1 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ACDS2.0/Pods-ACDS2.0-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ACDS2.0/Pods-ACDS2.0-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ACDS2.0/Pods-ACDS2.0-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D1C41FD3AFB0BF6DEB6F6F91 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ACDS2.0-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		CC44B66E2C589AA600916C27 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -340,6 +408,7 @@
 				CC60DA172C5AA96C0014F5F3 /* HomeView.swift in Sources */,
 				CC60DA152C5AA9370014F5F3 /* ProfileView.swift in Sources */,
 				CCF3CB152C61AA3900E694BB /* CarData.swift in Sources */,
+				CCA3413F2C702CA90097504F /* WebSocketService.swift in Sources */,
 				CC60DA0F2C5AA70A0014F5F3 /* FirstRegisterView.swift in Sources */,
 				CC60DA192C5AA9C90014F5F3 /* MainView.swift in Sources */,
 				CC60DA1B2C5B8E100014F5F3 /* PassRecoverView.swift in Sources */,
@@ -350,6 +419,7 @@
 				CC60DA0C2C5A9F5F0014F5F3 /* UserData.swift in Sources */,
 				CCF3CB172C61E6EA00E694BB /* CarDetailView.swift in Sources */,
 				CCF2F7E22C6800E1006F3333 /* QRCodeGenerate.swift in Sources */,
+				CCA5E63E2C6EC5320073E8AF /* OrderTimeLineView.swift in Sources */,
 				CCF2F7E42C6814DA006F3333 /* AppointmentsView.swift in Sources */,
 				CC44B6762C589AA600916C27 /* ACDS2_0App.swift in Sources */,
 				CCF2F7E62C683148006F3333 /* AppointmentsDetailView.swift in Sources */,
@@ -415,7 +485,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -478,7 +548,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -499,11 +569,13 @@
 		};
 		CC44B6812C589AA800916C27 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7000DDAEA736863203184A80 /* Pods-ACDS2.0.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = ACDS2.0/ACDS2.0.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -511,10 +583,12 @@
 				DEVELOPMENT_TEAM = VA99BS647B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ACDS2-0-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -535,11 +609,13 @@
 		};
 		CC44B6822C589AA800916C27 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6B58181BB05F99F4C34548C7 /* Pods-ACDS2.0.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = ACDS2.0/ACDS2.0.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -547,10 +623,12 @@
 				DEVELOPMENT_TEAM = VA99BS647B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ACDS2-0-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -666,6 +744,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CCA341402C72A5650097504F /* XCRemoteSwiftPackageReference "socket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CCA341412C72A5650097504F /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCA341402C72A5650097504F /* XCRemoteSwiftPackageReference "socket" */;
+			productName = SocketIO;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CC44B66A2C589AA600916C27 /* Project object */;
 }

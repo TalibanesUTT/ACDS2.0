@@ -33,7 +33,7 @@ struct CarDetail: Identifiable{
     let appointments: [String:Any]?
     let services: [[String:Any]]
     let detail: [String:Any]
-    let history: [String:Any]?
+    let history: [[String:Any]]?
     let actualStatus: String?
 }
 

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import UserNotifications
 
 class NavigationManager: ObservableObject {
     @Published var path = NavigationPath()
@@ -25,6 +26,7 @@ struct LoginView: View {
     @State var showAlert: Bool = false
     @State var ableToLogin: Bool = true
     @State private var alertMessage = ""
+    @State var isFromAdmin: Bool = false
     @EnvironmentObject var navigationManager: NavigationManager
     @ObservedObject var userData = UserData.shared
     var watchConnection = WatchConnector()
@@ -144,7 +146,7 @@ struct LoginView: View {
                         .italic()
                         .opacity(1)
                         .foregroundColor(Color.gray.opacity(0.6))
-                    
+                
                     Button(action: {
                         navigateToRecoverPassword()
                     }, label: {
@@ -169,7 +171,7 @@ struct LoginView: View {
                             SecondRegisterView().navigationBarBackButtonHidden(true)
                             
                         case "Code":
-                            CodeVerifyView().navigationBarBackButtonHidden(true)
+                            CodeVerifyView(fromAdmin: isFromAdmin).navigationBarBackButtonHidden(true)
                             
                         case "Recover":
                             PassRecoverView()
@@ -195,6 +197,8 @@ struct LoginView: View {
                 if (!userData.token.isEmpty){
                     navigateToHome()
                 }
+                emailText = ""
+                passwordText = ""
             }
         }
     }
@@ -214,6 +218,11 @@ struct LoginView: View {
     func navigateToMechanicView(){
         navigationManager.path.append("Mechanic")
     }
+    
+    func navigateToCode(){
+        navigationManager.path.append("Code")
+    }
+    
     
     //MARK: - Requests
     
@@ -247,13 +256,24 @@ struct LoginView: View {
                 if (httpResponse.statusCode == 200) {
                     do {
                         let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
-
-                        DispatchQueue.main.async {
-                            self.userData.token = JSONResponse["data"] as! String
-                            print(self.userData.token)
-                            getProfile()
-                         
+                        
+                        let url = JSONResponse["url"] as? String
+                        if (!((url?.isEmpty) == nil)){
+                            DispatchQueue.main.async {
+                                isFromAdmin = true
+                                self.userData.signedRoute = url!
+                                navigateToCode()
+                            }
                         }
+                        else {
+                            DispatchQueue.main.async {
+                                self.userData.token = JSONResponse["data"] as! String
+                                print(self.userData.token)
+                                getProfile()
+                             
+                            }
+                        }
+
                     }
                     catch{
                         alertMessage = "Algo salió mal"
@@ -309,13 +329,18 @@ struct LoginView: View {
                             self.userData.lastName = JSONResponse["lastName"] as! String
                             self.userData.email = JSONResponse["email"] as! String
                             self.userData.phone_number = JSONResponse["phoneNumber"] as! String
+                            let role = JSONResponse["role"] as! String
                             if (JSONResponse["role"] as! String == "customer"){
                                 
-                                //activateWatch()
+                                activateWatch()
                                 navigateToHome()
                             }
-                            else{
+                            else if (role == "mechanic"){
                                 navigateToMechanicView()
+                            }
+                            else{
+                                alertMessage = "No puedes acceder"
+                                showAlert = true
                             }
                         }
                     }

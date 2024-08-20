@@ -21,6 +21,7 @@ struct AppointmentsDetailView: View {
     @State private var alertMessage = ""
     @State var titleAlert: String = ""
     @State var invalidDates : [String]? = []
+    @State var invalidHours: [String]? = []
     @ObservedObject var userData = UserData.shared
     @State private var keyboardHeight: CGFloat = 0
 
@@ -48,27 +49,7 @@ struct AppointmentsDetailView: View {
     
     
     
-    var timeSlots: [Date] {
-            let calendar = Calendar.current
-            let startOfDay = calendar.startOfDay(for: Date())
-            
-            let startTime = calendar.date(byAdding: .hour, value: 9, to: startOfDay)!
-            
-            
-            let endTime = calendar.date(byAdding: .hour, value: 18, to: startOfDay)!
-            let endTimeWithMinutes = calendar.date(byAdding: .minute, value: 30, to: endTime)!
-            
-            
-            var timeSlots: [Date] = []
-            var currentTime = startTime
-            
-            while currentTime <= endTimeWithMinutes {
-                timeSlots.append(currentTime)
-                currentTime = calendar.date(byAdding: .minute, value: 30, to: currentTime)!
-            }
-            
-            return timeSlots
-        }
+    @State var timeSlots: [Date]  = []
 
     
     var body: some View {
@@ -109,6 +90,7 @@ struct AppointmentsDetailView: View {
                 DatePicker("", selection: $selectedDate, in: dateRange.first!...dateRange.last!, displayedComponents: [.date])
                     .datePickerStyle(.graphical)
                     .onChange(of: selectedDate, perform: { newDate in
+                        print(selectedHour)
                         let calendar = Calendar.current
                 
                         if !dateRange.contains(selectedDate) {
@@ -132,15 +114,19 @@ struct AppointmentsDetailView: View {
                         dateFormatter.timeZone = TimeZone(identifier: "America/Mexico_City")
                         let dateString = dateFormatter.string(from: selectedDate)
                         
-                        if (invalidDates!.contains(dateString)){
-                            print("si")
-                            selectedDate = dateRange.first(where: { $0 > selectedDate }) ?? dateRange.first!
-                            
-                            alertMessage = "Ya tienes una cita para esta fecha"
-                            titleAlert = "Aviso"
-                            showAlert = true
-                            
+                        unavailableHoursRequest(dateString)
+                        
+                        
+                        if (appointmentId == nil){
+                            if (invalidDates!.contains(dateString)){
+                                selectedDate = dateRange.first(where: { $0 > selectedDate }) ?? dateRange.first!
+                                
+                                alertMessage = "Ya tienes una cita para esta fecha"
+                                titleAlert = "Aviso"
+                                showAlert = true
+                            }
                         }
+                        
                     })
                     .colorScheme(.light)
                 
@@ -186,10 +172,14 @@ struct AppointmentsDetailView: View {
             }
             .onAppear(perform: {
                 subscribeToKeyboardEvents()
+                appointmentDatesRequest()
+                generateTimeSlots()
+                
                 if (appointmentId != nil){
                     title = "Editar cita"
+                    convertToDate()
+                    selectedHour = Date()
                 }
-                appointmentDatesRequest()
             })
             .onDisappear(perform: {
                 unsubscribeFromKeyboardEvents()
@@ -213,9 +203,6 @@ struct AppointmentsDetailView: View {
         dateFormatter.locale = Locale(identifier: "en_GB")
 
         let hourString = dateFormatter.string(from: selectedHour)
-        
-        
-        
         
         let requestBody: [String: Any] = [
             "userId": userData.id,
@@ -297,9 +284,52 @@ struct AppointmentsDetailView: View {
                         let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
                         let appointments = JSONResponse["data"] as! [String]
                         invalidDates = appointments
+                    }
+                    catch{
+                        alertMessage = "Algo salió mal"
+                        showAlert = true
+                        print(error)
+                    }
+                }
+                else {
+                    do {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        print(JSONResponse)
+                        let error = JSONResponse["error"] as! [String:Any]
+                        let message = error["message"] as! String
                         DispatchQueue.main.async {
-                           
+                            alertMessage = message
+                            showAlert = true
                         }
+                    }
+                    catch{
+                        alertMessage = "Algo salió mal"
+                        showAlert = true
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    func unavailableHoursRequest(_ date : String){
+        let url = URL(string: "\(userData.prodUrl)/appointments/unavailableHours/\(date)")!
+        var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
+        request.httpMethod = "GET"
+        request.addValue("Bearer " + userData.token, forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error en el request: \(error)")
+                return
+            }
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                if (httpResponse.statusCode == 200) {
+                    do {
+                        let JSONResponse = try JSONSerialization.jsonObject(with:data!) as! [String:Any]
+                        invalidHours = (JSONResponse["data"] as! [String])
+                        validateHours()
                     }
                     catch{
                         alertMessage = "Algo salió mal"
@@ -330,6 +360,59 @@ struct AppointmentsDetailView: View {
     
     //MARK: - Helpers
     
+    func convertToDate(){
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(identifier: "America/Mexico_City")
+        
+        let date = appointmentDate!
+        let hour = appointmentHour!
+        
+        selectedDate = dateFormatter.date(from: date) ?? Date()
+        
+        dateFormatter.dateFormat = "HH:mm"
+        
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm"
+        timeFormatter.locale = Locale(identifier: "en_GB")
+        
+        // Configuración del DateFormatter para el formato completo
+        let fullDateFormatter = DateFormatter()
+        fullDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+        //fullDateFormatter.timeZone = TimeZone(identifier: "America/Mexico_City")
+        
+        // Obtener el calendario
+        let calendar = Calendar.current
+        
+        // Obtener la hora desde el string
+        guard let time = timeFormatter.date(from: hour) else {
+            print("No se pudo convertir el string de hora")
+            return
+        }
+        
+        // Extraer componentes de la fecha de referencia
+        let year = calendar.component(.year, from: selectedDate)
+        let month = calendar.component(.month, from: selectedDate)
+        let day = calendar.component(.day, from: selectedDate)
+        
+        // Crear un nuevo Date con la fecha de referencia y la nueva hora
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: time)
+        components.year = year
+        components.month = month
+        components.day = day
+        
+        guard let newDate = calendar.date(from: components) else {
+            print("No se pudo crear la nueva fecha")
+            return
+        }
+        
+        
+        let fullDateString = fullDateFormatter.string(from: newDate)
+        selectedHour = fullDateFormatter.date(from: "2024-08-14 9:30:00 p.m. +0000")!
+        
+    }
+    
     func checkForm() {
         if (!reasonText.isEmpty && reasonError == nil) {
             notAbleToCreate = false
@@ -344,6 +427,46 @@ struct AppointmentsDetailView: View {
         }
         
         return nil
+    }
+    
+    func validateHours(){
+        let dateFormatter = DateFormatter()
+
+        dateFormatter.dateFormat = "HH:mm"
+        dateFormatter.locale = Locale(identifier: "en_GB")
+
+        let formattedTimes = timeSlots.map { dateFormatter.string(from: $0) }
+        
+        var matchingIndexes: [Int] = []
+
+        for (index, timeSlot) in formattedTimes.enumerated() {
+        
+            if invalidHours!.contains(timeSlot) {
+                matchingIndexes.append(index)
+            }
+        }
+        
+        for index in matchingIndexes.sorted(by: >) {
+            timeSlots.remove(at: index)
+        }
+    }
+    
+    func generateTimeSlots() {
+            let calendar = Calendar.current
+            let startOfDay = calendar.startOfDay(for: Date())
+            let startTime = calendar.date(byAdding: .hour, value: 9, to: startOfDay)!
+            let endTime = calendar.date(byAdding: .hour, value: 18, to: startOfDay)!
+            let endTimeWithMinutes = calendar.date(byAdding: .minute, value: 30, to: endTime)!
+            
+            var slots: [Date] = []
+            var currentTime = startTime
+            
+            while currentTime <= endTimeWithMinutes {
+                slots.append(currentTime)
+                currentTime = calendar.date(byAdding: .minute, value: 30, to: currentTime)!
+            }
+            
+            timeSlots = slots
     }
     
     func subscribeToKeyboardEvents() {
